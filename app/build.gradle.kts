@@ -40,6 +40,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -50,6 +51,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
+    implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.constraintlayout)
 
     // ===== Lifecycle + ViewModel =====

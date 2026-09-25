@@ -2,6 +2,7 @@ package com.example.smartmicrogrid.data.repository
 
 import com.example.smartmicrogrid.data.remote.dto.ApiError
 import com.google.gson.Gson
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -16,9 +17,10 @@ import java.io.IOException
  *   - catches HTTP errors (HttpException / non-2xx)
  *   - parses the backend's inconsistent error body (ApiError)
  *   - returns a uniform ApiResult<T>
+ *   - re-throws CancellationException so coroutine cancellation still works
  *
  * The block is expected to return a Retrofit Response<T>.
- * For endpoints that return Unit (204 No Content), use Response<Unit>.
+ * For endpoints that return Unit (204 No Content), use safeApiCallUnit.
  */
 suspend fun <T> safeApiCall(
     block: suspend () -> Response<T>
@@ -30,11 +32,13 @@ suspend fun <T> safeApiCall(
             if (body != null) {
                 ApiResult.Success(body)
             } else {
-                // 204 No Content or empty body — but caller expects T.
-                // We treat "success with no body" as an error of type Unit at the call site.
-                // If you know your endpoint returns no body, call safeApiCallUnit instead.
-                @Suppress("UNCHECKED_CAST")
-                ApiResult.Success(Unit as T)
+                // A 2xx with no body is not usable data for a caller expecting T.
+                // Endpoints that genuinely return 204 must use safeApiCallUnit.
+                ApiResult.Error(
+                    message = "Empty response body",
+                    code = response.code(),
+                    isNetworkError = false
+                )
             }
         } else {
             val error = parseErrorBody(response)
@@ -44,6 +48,9 @@ suspend fun <T> safeApiCall(
                 isNetworkError = false
             )
         }
+    } catch (e: CancellationException) {
+        // Never swallow cancellation — viewModelScope / lifecycle cancel relies on it.
+        throw e
     } catch (e: IOException) {
         ApiResult.Error(
             message = "Network error. Please check your connection.",
@@ -84,6 +91,8 @@ suspend fun safeApiCallUnit(
                 isNetworkError = false
             )
         }
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: IOException) {
         ApiResult.Error(
             message = "Network error. Please check your connection.",

@@ -2,6 +2,7 @@ package com.example.smartmicrogrid.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import java.time.Instant
 
 /**
  * Manages the logged-in user's session.
@@ -64,10 +65,19 @@ class SessionManager(context: Context) {
     fun getExpiresAt(): String? = prefs.getString(Constants.KEY_EXPIRES_AT, null)
 
     /**
-     * Returns true if a JWT is stored.
-     * Note: does NOT check expiry — do that separately when needed.
+     * Returns true if the stored expiry (LoginResponse.expiresAt) is in the future.
+     * Fails closed: a missing or unparseable expiry counts as NOT valid.
      */
-    fun isLoggedIn(): Boolean = !getJwt().isNullOrEmpty()
+    fun isSessionValid(): Boolean {
+        val expiry = DateUtils.parseIso(getExpiresAt()) ?: return false
+        return expiry.isAfter(Instant.now())
+    }
+
+    /**
+     * Returns true if a JWT is stored AND the session has not expired.
+     * Does not clear an expired session — callers decide (e.g. LoginActivity shows login).
+     */
+    fun isLoggedIn(): Boolean = !getJwt().isNullOrEmpty() && isSessionValid()
 
     /**
      * Clears the session (on logout or expired token).
