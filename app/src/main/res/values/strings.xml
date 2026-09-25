@@ -1,3 +1,47 @@
 <resources>
     <string name="app_name">SmartMicrogrid</string>
+
+    <!-- ==================== LOGIN ==================== -->
+    <string name="login_subtitle">Sign in to trade solar energy</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Password</string>
+    <string name="hint_email">you@example.com</string>
+    <string name="hint_password">Enter your password</string>
+    <string name="action_login">Login</string>
+    <string name="link_register">New user? Register here</string>
+
+    <!-- ==================== REGISTER ==================== -->
+    <string name="register_title">Create account</string>
+    <string name="register_subtitle">Register as a solar prosumer</string>
+    <string name="label_nic">NIC</string>
+    <string name="label_full_name">Full name</string>
+    <string name="label_contact">Contact number</string>
+    <string name="label_address">Address</string>
+    <string name="label_panel_capacity">Panel capacity (kW)</string>
+    <string name="hint_nic">e.g. 200012345678</string>
+    <string name="hint_full_name">e.g. Kamal Perera</string>
+    <string name="hint_contact">e.g. 0771234567</string>
+    <string name="hint_address">Street, city</string>
+    <string name="hint_panel_capacity">e.g. 5.5</string>
+    <string name="action_register">Register</string>
+    <string name="link_back_to_login">Already have an account? Login</string>
+
+    <!-- ==================== HOME (PLACEHOLDERS) ==================== -->
+    <!-- Used as a prefix: the Activity appends the user's name, e.g. "Hello, Kamal Perera" -->
+    <string name="greeting_prefix">Hello,</string>
+    <string name="label_dashboard_coming_soon">Dashboard coming soon</string>
+    <string name="label_operator_dashboard_coming_soon">Operator dashboard coming soon</string>
+    <string name="action_logout">Logout</string>
+
+    <!-- ==================== ADDITIONS (not in the requested list; needed by Phases 4-5) ==================== -->
+    <string name="login_title">Welcome back</string>
+    <string name="label_station_id">Station ID</string>
+    <string name="msg_login_welcome">Welcome, %1$s</string>
+    <string name="msg_registration_submitted">Registration submitted. Wait for Backoffice approval.</string>
+    <string name="msg_backoffice_web_only">Backoffice uses web app</string>
+    <string name="msg_unknown_role">Unknown role</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_panel_capacity_invalid">Enter a capacity greater than 0</string>
+    <string name="error_password_too_short">Password must be at least %1$d characters</string>
+    <string name="value_not_available">Not available</string>
 </resources>

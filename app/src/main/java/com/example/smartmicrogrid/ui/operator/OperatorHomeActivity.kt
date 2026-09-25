@@ -1,0 +1,65 @@
+package com.example.smartmicrogrid.ui.operator
+
+import android.content.Intent
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.example.smartmicrogrid.R
+import com.example.smartmicrogrid.databinding.ActivityOperatorHomeBinding
+import com.example.smartmicrogrid.ui.auth.LoginActivity
+import com.example.smartmicrogrid.utils.SessionManager
+
+/**
+ * File: OperatorHomeActivity.kt
+ * Purpose: PLACEHOLDER home for the GridOperator role. Shows the stored name, email and
+ *          assigned station ID and a Logout button. The real dashboard replaces this later.
+ * Author: Mobile Team
+ * Date: 2026
+ */
+class OperatorHomeActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityOperatorHomeBinding
+    private lateinit var session: SessionManager
+
+    // ==================== LIFECYCLE ====================
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        session = SessionManager(applicationContext)
+
+        // Safety net: process restore can bring this screen back after the session ended.
+        if (!session.isLoggedIn()) {
+            goToLogin()
+            return
+        }
+
+        binding = ActivityOperatorHomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        showSession()
+        binding.btnLogout.setOnClickListener {
+            session.clear()
+            goToLogin()
+        }
+    }
+
+    // ==================== HELPERS ====================
+
+    private fun showSession() {
+        val notAvailable = getString(R.string.value_not_available)
+        val name = session.getName().orEmpty()
+        val email = session.getEmail() ?: notAvailable
+        val stationId = session.getStationId() ?: notAvailable
+
+        binding.tvGreeting.text = "${getString(R.string.greeting_prefix)} $name".trim()
+        binding.tvEmail.text = "${getString(R.string.label_email)}: $email"
+        binding.tvStationId.text = "${getString(R.string.label_station_id)}: $stationId"
+    }
+
+    private fun goToLogin() {
+        startActivity(
+            Intent(this, LoginActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        )
+        finish()
+    }
+}
