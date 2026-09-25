@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-   Sample backup rules file; uncomment and customize as necessary.
-   See https://developer.android.com/guide/topics/data/autobackup
-   for details.
-   Note: This file is ignored for devices older than API 31
-   See https://developer.android.com/about/versions/12/backup-restore
+   Backup rules for Android 11 and older (Android 12+ uses data_extraction_rules.xml).
+   See https://developer.android.com/guide/topics/data/autobackup for details.
 -->
 <full-backup-content>
-    <!--
-   <include domain="sharedpref" path="."/>
-   <exclude domain="sharedpref" path="device.xml"/>
--->
+    <!-- The offline cache (Room database) holds personal data — bookings, the profile with NIC and
+         address — and is rebuilt by the next successful fetch, so it is never backed up. Room also
+         keeps -wal and -shm side files. Keep the name in step with AppDatabase.DATABASE_NAME. -->
+    <exclude domain="database" path="solar_microgrid_cache.db" />
+    <exclude domain="database" path="solar_microgrid_cache.db-wal" />
+    <exclude domain="database" path="solar_microgrid_cache.db-shm" />
 </full-backup-content>

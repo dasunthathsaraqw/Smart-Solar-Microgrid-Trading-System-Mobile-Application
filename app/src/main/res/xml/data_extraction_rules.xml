@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
-   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
+   Data extraction rules for Android 12+ (older versions use backup_rules.xml).
+   See https://developer.android.com/about/versions/12/backup-restore#xml-changes for details.
 -->
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <!-- The offline cache (Room database) holds personal data and is rebuilt by the next
+             successful fetch, so it is never backed up. Keep the name in step with
+             AppDatabase.DATABASE_NAME; Room also keeps -wal and -shm side files. -->
+        <exclude domain="database" path="solar_microgrid_cache.db" />
+        <exclude domain="database" path="solar_microgrid_cache.db-wal" />
+        <exclude domain="database" path="solar_microgrid_cache.db-shm" />
     </cloud-backup>
-    <!--
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <!-- Not carried to a new device either: the cache is per-login and disposable. -->
+        <exclude domain="database" path="solar_microgrid_cache.db" />
+        <exclude domain="database" path="solar_microgrid_cache.db-wal" />
+        <exclude domain="database" path="solar_microgrid_cache.db-shm" />
     </device-transfer>
-    -->
 </data-extraction-rules>
