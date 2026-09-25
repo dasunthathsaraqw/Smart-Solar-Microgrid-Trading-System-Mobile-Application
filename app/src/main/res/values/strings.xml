@@ -238,4 +238,38 @@
     <string name="msg_no_changes">No changes to save</string>
     <!-- Dashboard button (title case, like its neighbours; title_slot_management is the toolbar title) -->
     <string name="action_manage_slots">Manage Slots</string>
+
+    <!-- ==================== PROFILE (used by ProfileViewModel) ==================== -->
+    <string name="msg_profile_updated">Profile updated</string>
+    <string name="msg_password_changed">Password changed</string>
+    <string name="msg_deactivation_requested">Deactivation requested. Backoffice will review your request.</string>
+    <string name="msg_deactivation_already_requested">You have already requested deactivation.</string>
+    <string name="error_passwords_dont_match">Passwords don\'t match</string>
+
+    <!-- ==================== PROFILE ==================== -->
+    <string name="title_profile">My profile</string>
+    <string name="label_nic_readonly">NIC (cannot be changed)</string>
+    <string name="label_name">Name</string>
+    <string name="action_save_profile">Save Changes</string>
+    <string name="action_change_password">Change Password</string>
+    <string name="action_request_deactivation">Request Deactivation</string>
+    <string name="error_loading_profile">Couldn\'t load your profile</string>
+    <string name="error_updating_profile">Couldn\'t update your profile</string>
+    <string name="error_changing_password">Couldn\'t change your password</string>
+    <string name="error_requesting_deactivation">Couldn\'t request deactivation</string>
+
+    <!-- ==================== CHANGE PASSWORD DIALOG ==================== -->
+    <string name="title_change_password">Change password</string>
+    <string name="label_old_password">Current password</string>
+    <string name="label_new_password">New password</string>
+    <string name="label_confirm_password">Confirm new password</string>
+    <string name="action_submit_password_change">Update password</string>
+
+    <!-- ==================== PROFILE: ADDITIONS (not in the requested list) ==================== -->
+    <!-- Heading over the Change Password / Request Deactivation buttons -->
+    <string name="label_account_section">Account</string>
+    <!-- The deactivation button's text once a request is pending (the button is then disabled) -->
+    <string name="label_deactivation_requested">Deactivation requested</string>
+    <!-- Body of the "are you sure?" dialog. It stays active until Backoffice acts, so no logout. -->
+    <string name="msg_deactivation_confirm">Are you sure? Backoffice will review your request, and your account stays active until they act on it.</string>
 </resources>
