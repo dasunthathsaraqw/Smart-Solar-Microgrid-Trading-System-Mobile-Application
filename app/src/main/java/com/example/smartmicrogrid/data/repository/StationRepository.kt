@@ -6,12 +6,14 @@ import com.example.smartmicrogrid.data.remote.RetrofitClient
 import com.example.smartmicrogrid.data.remote.dto.NearbyStationResponse
 import com.example.smartmicrogrid.data.remote.dto.SlotResponse
 import com.example.smartmicrogrid.data.remote.dto.StationResponse
+import com.example.smartmicrogrid.data.remote.dto.UpdateSlotRequest
 
 /**
  * File: StationRepository.kt
- * Purpose: Fetches charging/transfer stations (all, or those near a location) and their
- *          bookable slots. Wraps every Retrofit call in safeApiCall so callers only ever
- *          deal with ApiResult.
+ * Purpose: Fetches charging/transfer stations (all, or those near a location) and works with
+ *          their slots: reading the bookable ones (prosumer booking, operator slot list) and
+ *          updating one (operator). Wraps every Retrofit call in safeApiCall so callers only
+ *          ever deal with ApiResult.
  * Author: Mobile Team
  * Date: 2026
  */
@@ -44,4 +46,28 @@ class StationRepository(context: Context) {
     /** GET /api/slots/station/{stationId}/available — unbooked, future slots within 7 days. */
     suspend fun getAvailableSlots(stationId: String): ApiResult<List<SlotResponse>> =
         safeApiCall { api.getAvailableSlots(stationId) }
+
+    /**
+     * PUT /api/slots/{slotId} — changes a slot's window and/or capacity (GridOperator only, for
+     * their own station's slots). Every field is optional: a null (or blank time) is left out of
+     * the request body, so only what the operator actually changed is sent. The server enforces
+     * the rules (e.g. a booked slot can't be modified) and its message comes back in
+     * ApiResult.Error.
+     */
+    suspend fun updateSlot(
+        slotId: String,
+        startTime: String?,
+        endTime: String?,
+        capacityKw: Double?
+    ): ApiResult<SlotResponse> =
+        safeApiCall {
+            api.updateSlot(
+                slotId,
+                UpdateSlotRequest(
+                    startTime = startTime?.takeIf { it.isNotBlank() },
+                    endTime = endTime?.takeIf { it.isNotBlank() },
+                    capacityKw = capacityKw
+                )
+            )
+        }
 }
