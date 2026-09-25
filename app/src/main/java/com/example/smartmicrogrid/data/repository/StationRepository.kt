@@ -1,6 +1,10 @@
 package com.example.smartmicrogrid.data.repository
 
 import android.content.Context
+import com.example.smartmicrogrid.data.local.AppDatabase
+import com.example.smartmicrogrid.data.local.dao.StationDao
+import com.example.smartmicrogrid.data.local.toEntity
+import com.example.smartmicrogrid.data.local.toResponse
 import com.example.smartmicrogrid.data.remote.ApiService
 import com.example.smartmicrogrid.data.remote.RetrofitClient
 import com.example.smartmicrogrid.data.remote.dto.NearbyStationResponse
@@ -20,12 +24,29 @@ import com.example.smartmicrogrid.data.remote.dto.UpdateSlotRequest
 class StationRepository(context: Context) {
 
     private val api: ApiService = RetrofitClient.getApiService(context)
+    private val stationDao: StationDao = AppDatabase.getInstance(context).stationDao()
 
-    // ==================== STATIONS ====================
+    // ==================== STATIONS (CACHE-AWARE) ====================
 
-    /** GET /api/stations — all active stations (no status filter; the server decides). */
-    suspend fun getStations(): ApiResult<List<StationResponse>> =
-        safeApiCall { api.getStations() }
+    /**
+     * GET /api/stations — all active stations (no status filter; the server decides).
+     *
+     * Network-first with the Room cache as fallback (returns a CachedResult). The list is always
+     * fetched whole, so a successful fetch replaces the whole cache. Only THIS call is cached:
+     * nearby stations (location-dependent, stale would mislead) and slots (availability) are not.
+     */
+    suspend fun getStations(): CachedResult<List<StationResponse>> =
+        networkFirst(
+            fetch = { safeApiCall { api.getStations() } },
+            save = { stations ->
+                val syncedAt = System.currentTimeMillis()
+                stationDao.replaceAll(stations.map { it.toEntity(syncedAt) })
+            },
+            readCache = {
+                val rows = stationDao.getAll()
+                if (rows.isEmpty()) null else (rows.map { it.toResponse() } to rows.maxOf { it.lastSyncedAt })
+            }
+        )
 
     // ==================== NEARBY ====================
 
