@@ -153,4 +153,25 @@
     <string name="action_confirm_update">Confirm change</string>
     <!-- Accessibility label for the QR ImageView -->
     <string name="content_desc_qr_code">QR code for your reservation</string>
+
+    <!-- ==================== NEARBY STATIONS (used by NearbyStationsViewModel) ==================== -->
+    <string name="msg_location_permission_denied">Location permission is needed to find solar stations near you.</string>
+    <string name="msg_location_unavailable">Couldn\'t get your location. Check that location is turned on and try again.</string>
+
+    <!-- ==================== NEARBY STATIONS ==================== -->
+    <string name="title_nearby_stations">Nearby stations</string>
+    <string name="msg_getting_location">Getting your location…</string>
+    <string name="msg_finding_stations">Finding stations…</string>
+    <string name="action_grant_permission">Grant Permission</string>
+    <string name="action_open_settings">Open Settings</string>
+    <string name="label_distance_km">Distance</string>
+    <string name="error_loading_nearby_stations">Couldn\'t load nearby stations</string>
+    <string name="title_station_detail">Station details</string>
+    <string name="label_capacity_kw">Capacity (kW)</string>
+
+    <!-- ==================== NEARBY STATIONS: ADDITIONS (not in the requested list) ==================== -->
+    <!-- Distance value, e.g. "2.3 km" (the label above is the plain word "Distance") -->
+    <string name="value_distance_km">%1$.1f km</string>
+    <string name="action_view_slots">View Slots</string>
+    <string name="label_no_nearby_stations">No stations found near you</string>
 </resources>
