@@ -43,9 +43,15 @@ sealed class BookingActionState {
 
 // ==================== VIEWMODEL ====================
 
-class CreateBookingViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repo = ReservationRepository(application.applicationContext)
+/**
+ * The repository is a constructor parameter that defaults to the real one, so the app behaves
+ * exactly as before while a unit test can pass a fake. @JvmOverloads keeps the plain
+ * (Application) constructor that Android's default ViewModel factory looks for.
+ */
+class CreateBookingViewModel @JvmOverloads constructor(
+    application: Application,
+    private val repo: ReservationRepository = ReservationRepository(application.applicationContext)
+) : AndroidViewModel(application) {
 
     private val _state = MutableLiveData<BookingActionState>(BookingActionState.Idle)
     val state: LiveData<BookingActionState> = _state
