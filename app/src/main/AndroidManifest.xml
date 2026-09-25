@@ -80,9 +80,23 @@
             android:name=".ui.booking.ConfirmBookingActivity"
             android:exported="false" />
 
-        <!-- Reusable: also the result screen for update/cancel in the next round -->
+        <!-- Reusable: also the result screen for update/cancel -->
         <activity
             android:name=".ui.booking.BookingSummaryActivity"
+            android:exported="false" />
+
+        <!-- ==================== MY BOOKINGS ==================== -->
+
+        <activity
+            android:name=".ui.booking.MyBookingsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.booking.BookingDetailActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.booking.QrDisplayActivity"
             android:exported="false" />
 
         <!-- MainActivity is intentionally NOT registered (Android Studio template leftover). -->
