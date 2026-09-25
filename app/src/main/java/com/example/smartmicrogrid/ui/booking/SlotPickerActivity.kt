@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.smartmicrogrid.R
 import com.example.smartmicrogrid.data.remote.dto.SlotResponse
 import com.example.smartmicrogrid.databinding.ActivitySlotPickerBinding
 import com.example.smartmicrogrid.ui.common.handleSessionExpired
@@ -16,6 +17,10 @@ import com.example.smartmicrogrid.viewmodel.SlotPickerViewModel
  * File: SlotPickerActivity.kt
  * Purpose: Step 2 of Create Booking. Lists the unbooked, future slots of the chosen station
  *          from GET /api/slots/station/{id}/available; tapping one opens the confirm screen.
+ *          Also used in UPDATE MODE: when launched with a reservationId (from the booking
+ *          detail screen) it lists slots for that booking's station, shows "Select a new
+ *          slot", and passes the reservationId on so the confirm step moves the booking
+ *          instead of creating one.
  * Author: Mobile Team
  * Date: 2026
  */
@@ -27,6 +32,9 @@ class SlotPickerActivity : AppCompatActivity() {
 
     private lateinit var stationId: String
     private lateinit var stationName: String
+
+    /** Non-null = update mode: the reservation being moved. Null = normal create flow. */
+    private var reservationId: String? = null
 
     // ==================== LIFECYCLE ====================
 
@@ -41,11 +49,15 @@ class SlotPickerActivity : AppCompatActivity() {
         }
         stationId = id
         stationName = intent.getStringExtra(EXTRA_STATION_NAME).orEmpty()
+        reservationId = intent.getStringExtra(EXTRA_RESERVATION_ID)
 
         binding = ActivitySlotPickerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.toolbar.subtitle = stationName
+        if (reservationId != null) {
+            binding.toolbar.setTitle(R.string.title_select_new_slot)
+        }
         binding.toolbar.setNavigationOnClickListener { finish() }
         binding.rvSlots.adapter = adapter
         binding.btnRetry.setOnClickListener { viewModel.loadSlots(stationId) }
@@ -92,7 +104,9 @@ class SlotPickerActivity : AppCompatActivity() {
     }
 
     private fun openConfirm(slot: SlotResponse) {
-        startActivity(ConfirmBookingActivity.newIntent(this, stationId, stationName, slot))
+        startActivity(
+            ConfirmBookingActivity.newIntent(this, stationId, stationName, slot, reservationId)
+        )
     }
 
     // ==================== INTENT ====================
@@ -100,10 +114,17 @@ class SlotPickerActivity : AppCompatActivity() {
     companion object {
         private const val EXTRA_STATION_ID = "extra_station_id"
         private const val EXTRA_STATION_NAME = "extra_station_name"
+        private const val EXTRA_RESERVATION_ID = "extra_reservation_id"
 
-        fun newIntent(context: Context, stationId: String, stationName: String): Intent =
-            Intent(context, SlotPickerActivity::class.java)
-                .putExtra(EXTRA_STATION_ID, stationId)
-                .putExtra(EXTRA_STATION_NAME, stationName)
+        /** Pass [reservationId] to open in update mode (moving that reservation to a new slot). */
+        fun newIntent(
+            context: Context,
+            stationId: String,
+            stationName: String,
+            reservationId: String? = null
+        ): Intent = Intent(context, SlotPickerActivity::class.java)
+            .putExtra(EXTRA_STATION_ID, stationId)
+            .putExtra(EXTRA_STATION_NAME, stationName)
+            .putExtra(EXTRA_RESERVATION_ID, reservationId)
     }
 }
