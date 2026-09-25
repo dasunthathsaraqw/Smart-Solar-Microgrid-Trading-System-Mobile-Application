@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Lighter status colors so counters and chips stay readable on dark surfaces -->
+    <color name="status_pending">#FFFFB74D</color>
+    <color name="status_approved">#FF4DB6AC</color>
+    <color name="status_completed">#FF81C784</color>
+    <color name="status_cancelled">#FFE57373</color>
+</resources>
