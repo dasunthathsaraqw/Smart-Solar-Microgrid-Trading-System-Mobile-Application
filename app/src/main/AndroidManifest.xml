@@ -76,6 +76,17 @@
             android:name=".ui.operator.CompletedHistoryActivity"
             android:exported="false" />
 
+        <!-- ==================== OPERATOR (QR CHECK-IN + SLOT MANAGEMENT) ==================== -->
+
+        <!-- Uses the CAMERA permission declared above -->
+        <activity
+            android:name=".ui.operator.QrScannerActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.operator.SlotManagementActivity"
+            android:exported="false" />
+
         <!-- ==================== BOOKING (CREATE FLOW) ==================== -->
 
         <activity
