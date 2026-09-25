@@ -13,6 +13,7 @@ import com.example.smartmicrogrid.data.remote.dto.ProsumerDashboardResponse
 import com.example.smartmicrogrid.data.remote.dto.ReservationResponse
 import com.example.smartmicrogrid.databinding.ActivityProsumerHomeBinding
 import com.example.smartmicrogrid.ui.auth.LoginActivity
+import com.example.smartmicrogrid.ui.booking.MyBookingsActivity
 import com.example.smartmicrogrid.ui.booking.StationPickerActivity
 import com.example.smartmicrogrid.utils.Constants
 import com.example.smartmicrogrid.utils.DateUtils
@@ -69,9 +70,12 @@ class ProsumerHomeActivity : AppCompatActivity() {
             startActivity(Intent(this, StationPickerActivity::class.java))
         }
 
+        binding.btnMyBookings.setOnClickListener {
+            startActivity(Intent(this, MyBookingsActivity::class.java))
+        }
+
         // These screens don't exist yet — no broken Intents, just a toast.
         listOf(
-            binding.btnMyBookings,
             binding.btnNearbyStations,
             binding.btnProfile
         ).forEach { button ->
