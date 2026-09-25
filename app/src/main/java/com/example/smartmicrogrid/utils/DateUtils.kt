@@ -9,6 +9,7 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 /**
@@ -86,4 +87,12 @@ object DateUtils {
             formatForDisplay(startIso),
             formatTimeForDisplay(endIso)
         )
+
+    // ==================== TO THE BACKEND ====================
+
+    /**
+     * Formats [instant] as the backend's ISO-8601 UTC timestamp, e.g. "2026-09-25T08:30:00Z"
+     * (whole seconds). The inverse of [parseIso], for sending a picked date/time back.
+     */
+    fun toIsoUtc(instant: Instant): String = instant.truncatedTo(ChronoUnit.SECONDS).toString()
 }
