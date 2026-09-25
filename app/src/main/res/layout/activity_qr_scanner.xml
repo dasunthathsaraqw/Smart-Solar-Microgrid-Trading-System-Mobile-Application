@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    File: activity_qr_scanner.xml
+    Purpose: Operator QR check-in. A ZXing DecoratedBarcodeView fills the screen under the
+             toolbar; everything else is an overlay the Activity toggles from the scan state:
+             cardInstruction (while scanning), cardBusy (verifying / completing),
+             resultPanel (verified reservation with Complete Charge / Scan Again, then the
+             success or failure message), and permissionContainer (camera access refused,
+             opaque, covers the preview).
+    Author: Mobile Team
+    Date: 2026
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.operator.QrScannerActivity">
+
+    <!-- ==================== TOOLBAR ==================== -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationContentDescription="@string/action_navigate_up"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:title="@string/title_qr_scanner" />
+
+    <!-- ==================== CAMERA ==================== -->
+    <!-- ZXing's DecoratedBarcodeView = camera preview + viewfinder overlay. The Activity drives
+         it (resume/pause, decodeSingle) and hides its built-in status line in favour of
+         cardInstruction. -->
+    <com.journeyapps.barcodescanner.DecoratedBarcodeView
+        android:id="@+id/barcodeView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <!-- ==================== INSTRUCTION ==================== -->
+    <!-- A card (theme surface colours) so the text reads on any camera image, light or dark. -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardInstruction"
+        style="@style/Widget.Material3.CardView.Elevated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <TextView
+            android:id="@+id/tvInstruction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp"
+            android:text="@string/msg_scanning"
+            android:textAppearance="?attr/textAppearanceBodyMedium" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- ==================== BUSY ==================== -->
+    <!-- Verifying / Completing. Message set by the Activity. -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardBusy"
+        style="@style/Widget.Material3.CardView.Elevated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/barcodeView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/barcodeView"
+        tools:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="20dp">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="32dp"
+                android:layout_height="32dp" />
+
+            <TextView
+                android:id="@+id/tvBusyMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/msg_verifying"
+                android:textAppearance="?attr/textAppearanceBodyLarge" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- ==================== RESULT PANEL ==================== -->
+    <!-- Hugs the bottom; the buttons sit side by side to keep it compact. The Activity shows or
+         hides tvWarning / tvResultMessage / btnCompleteCharge for each step:
+           verified   -> details + warning + Scan Again + Complete Charge
+           completed  -> details + success message + Scan Again
+           failed     -> details + error message + Scan Again (+ Complete Charge to retry) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/resultPanel"
+        style="@style/Widget.Material3.CardView.Elevated"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:visibility="gone"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintVertical_bias="1.0"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tvResultTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_scan_result"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textStyle="bold" />
+
+            <!-- The reservation details as one block, so the Activity can hide them all when the
+                 scan failed to verify (nothing to show). -->
+            <LinearLayout
+                android:id="@+id/layoutDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/label_prosumer_name"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
+                android:textColor="@color/gray" />
+
+            <TextView
+                android:id="@+id/tvProsumerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textStyle="bold"
+                tools:text="Kamal Perera" />
+
+            <TextView
+                android:id="@+id/tvProsumerNic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="@color/gray"
+                tools:text="NIC: 200012345678" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/label_station_name"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
+                android:textColor="@color/gray" />
+
+            <TextView
+                android:id="@+id/tvStationName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                tools:text="Colombo North Hub" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/label_slot_time"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
+                android:textColor="@color/gray" />
+
+            <TextView
+                android:id="@+id/tvSlotTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                tools:text="25 Sep 2026, 14:00 – 15:00" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/label_capacity"
+                android:textAppearance="?attr/textAppearanceLabelMedium"
+                android:textColor="@color/gray" />
+
+            <TextView
+                android:id="@+id/tvCapacity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                tools:text="5.5 kW" />
+            </LinearLayout>
+
+            <!-- Completing can't be undone — said before the button, only while awaiting confirmation -->
+            <TextView
+                android:id="@+id/tvWarning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/msg_complete_charge_warning"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="@color/status_pending" />
+
+            <!-- Success text (green) or the server's failure message (red), set by the Activity -->
+            <TextView
+                android:id="@+id/tvResultMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="Charging session completed"
+                tools:textColor="@color/success" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnScanAgain"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:minHeight="56dp"
+                    android:paddingHorizontal="8dp"
+                    android:text="@string/action_scan_again" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCompleteCharge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:minHeight="56dp"
+                    android:paddingHorizontal="8dp"
+                    android:text="@string/action_complete_charge" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- ==================== PERMISSION DENIED ==================== -->
+    <!-- Opaque so the camera underneath can't be used. Grant Permission while the system will
+         still prompt; Open Settings once the user has refused permanently. -->
+    <LinearLayout
+        android:id="@+id/permissionContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="?attr/colorSurface"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        tools:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvPermissionMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/msg_camera_permission_denied"
+            android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGrantPermission"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:minHeight="48dp"
+            android:text="@string/action_grant_permission" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOpenSettings"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minHeight="48dp"
+            android:text="@string/action_open_settings"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
