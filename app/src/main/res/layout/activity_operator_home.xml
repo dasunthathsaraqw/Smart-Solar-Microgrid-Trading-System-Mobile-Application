@@ -271,13 +271,21 @@
                     android:text="@string/action_completed_history" />
             </LinearLayout>
 
-            <!-- Round 2 wires this to the QR scanner; until then it toasts "Coming soon". -->
+            <!-- Primary operator action: the QR check-in -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnScanQr"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="12dp"
                 android:text="@string/action_scan_qr" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnManageSlots"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:text="@string/action_manage_slots" />
         </LinearLayout>
     </ScrollView>
 
