@@ -99,6 +99,12 @@
             android:name=".ui.booking.QrDisplayActivity"
             android:exported="false" />
 
+        <!-- ==================== NEARBY STATIONS (MAP) ==================== -->
+
+        <activity
+            android:name=".ui.maps.NearbyStationsActivity"
+            android:exported="false" />
+
         <!-- MainActivity is intentionally NOT registered (Android Studio template leftover). -->
 
     </application>
