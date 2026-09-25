@@ -174,4 +174,34 @@
     <string name="value_distance_km">%1$.1f km</string>
     <string name="action_view_slots">View Slots</string>
     <string name="label_no_nearby_stations">No stations found near you</string>
+
+    <!-- ==================== OPERATOR (used by CompletedHistoryViewModel) ==================== -->
+    <string name="msg_operator_station_missing">No station is assigned to your account.</string>
+
+    <!-- ==================== OPERATOR DASHBOARD ==================== -->
+    <string name="title_operator_dashboard">Operator dashboard</string>
+    <string name="label_pending_today">Pending today</string>
+    <string name="label_approved_today">Approved today</string>
+    <string name="label_completed_today">Completed today</string>
+    <string name="title_upcoming_approved">Upcoming approved</string>
+    <string name="label_no_upcoming">No upcoming approved reservations</string>
+    <string name="action_pending_approvals">Pending Approvals</string>
+    <string name="action_completed_history">Completed History</string>
+    <string name="action_scan_qr">Scan QR</string>
+    <string name="error_loading_operator_dashboard">Couldn\'t load the operator dashboard</string>
+
+    <!-- ==================== PENDING APPROVALS ==================== -->
+    <string name="title_pending_approvals">Pending approvals</string>
+    <string name="label_no_pending">No reservations are waiting for approval</string>
+    <string name="error_loading_pending">Couldn\'t load pending approvals</string>
+
+    <!-- ==================== COMPLETED HISTORY ==================== -->
+    <string name="title_completed_history">Completed history</string>
+    <string name="label_no_history">No completed reservations yet</string>
+    <string name="action_load_more">Load more</string>
+    <string name="error_loading_history">Couldn\'t load the history</string>
+
+    <!-- ==================== OPERATOR: ADDITIONS (not in the requested list) ==================== -->
+    <!-- Operator rows and the read-only detail sheet show WHO booked, not just where -->
+    <string name="label_prosumer_name">Prosumer</string>
 </resources>
