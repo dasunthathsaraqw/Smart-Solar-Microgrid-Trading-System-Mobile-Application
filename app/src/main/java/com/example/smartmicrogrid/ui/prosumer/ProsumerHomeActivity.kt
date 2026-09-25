@@ -16,6 +16,7 @@ import com.example.smartmicrogrid.ui.auth.LoginActivity
 import com.example.smartmicrogrid.ui.booking.MyBookingsActivity
 import com.example.smartmicrogrid.ui.booking.StationPickerActivity
 import com.example.smartmicrogrid.ui.maps.NearbyStationsActivity
+import com.example.smartmicrogrid.ui.profile.ProfileActivity
 import com.example.smartmicrogrid.utils.Constants
 import com.example.smartmicrogrid.utils.DateUtils
 import com.example.smartmicrogrid.utils.SessionManager
@@ -62,6 +63,13 @@ class ProsumerHomeActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        // The Profile screen updates the cached name/email in the session; re-read them so the
+        // header isn't stale on return. (binding is unset if onCreate redirected to Login.)
+        if (::binding.isInitialized) showHeader()
+    }
+
     // ==================== LISTENERS ====================
 
     private fun setupListeners() {
@@ -79,9 +87,8 @@ class ProsumerHomeActivity : AppCompatActivity() {
             startActivity(Intent(this, NearbyStationsActivity::class.java))
         }
 
-        // Profile doesn't exist yet — no broken Intent, just a toast.
         binding.btnProfile.setOnClickListener {
-            Toast.makeText(this, R.string.msg_coming_soon, Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, ProfileActivity::class.java))
         }
 
         binding.btnLogout.setOnClickListener {
