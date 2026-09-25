@@ -1,5 +1,7 @@
 package com.example.smartmicrogrid.utils
 
+import android.content.Context
+import com.example.smartmicrogrid.R
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
@@ -73,4 +75,15 @@ object DateUtils {
             .withZone(ZoneId.systemDefault())
             .format(instant)
     }
+
+    /**
+     * A slot window for display: start date + time, then end time only,
+     * e.g. "25 Sep 2026, 14:00 – 15:00" (see R.string.label_slot_range).
+     */
+    fun formatSlotRange(context: Context, startIso: String?, endIso: String?): String =
+        context.getString(
+            R.string.label_slot_range,
+            formatForDisplay(startIso),
+            formatTimeForDisplay(endIso)
+        )
 }
