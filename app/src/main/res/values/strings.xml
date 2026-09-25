@@ -272,4 +272,9 @@
     <string name="label_deactivation_requested">Deactivation requested</string>
     <!-- Body of the "are you sure?" dialog. It stays active until Backoffice acts, so no logout. -->
     <string name="msg_deactivation_confirm">Are you sure? Backoffice will review your request, and your account stays active until they act on it.</string>
+
+    <!-- ==================== OFFLINE CACHE BANNER ==================== -->
+    <!-- %1$s is the time of the last successful sync, e.g. "25 Sep 2026, 14:00" -->
+    <string name="label_showing_cached_data">Showing offline data from %1$s</string>
+    <string name="label_last_synced">Last synced %1$s</string>
 </resources>
