@@ -126,6 +126,12 @@
             android:name=".ui.maps.NearbyStationsActivity"
             android:exported="false" />
 
+        <!-- ==================== PROFILE (PROSUMER ONLY) ==================== -->
+
+        <activity
+            android:name=".ui.profile.ProfileActivity"
+            android:exported="false" />
+
         <!-- MainActivity is intentionally NOT registered (Android Studio template leftover). -->
 
     </application>
