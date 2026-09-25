@@ -13,6 +13,7 @@ import com.example.smartmicrogrid.data.remote.dto.ProsumerDashboardResponse
 import com.example.smartmicrogrid.data.remote.dto.ReservationResponse
 import com.example.smartmicrogrid.databinding.ActivityProsumerHomeBinding
 import com.example.smartmicrogrid.ui.auth.LoginActivity
+import com.example.smartmicrogrid.ui.booking.StationPickerActivity
 import com.example.smartmicrogrid.utils.Constants
 import com.example.smartmicrogrid.utils.DateUtils
 import com.example.smartmicrogrid.utils.SessionManager
@@ -64,9 +65,12 @@ class ProsumerHomeActivity : AppCompatActivity() {
     private fun setupListeners() {
         binding.btnRetry.setOnClickListener { viewModel.loadDashboard() }
 
-        // Target screens don't exist yet — no broken Intents, just a toast.
+        binding.btnCreateBooking.setOnClickListener {
+            startActivity(Intent(this, StationPickerActivity::class.java))
+        }
+
+        // These screens don't exist yet — no broken Intents, just a toast.
         listOf(
-            binding.btnCreateBooking,
             binding.btnMyBookings,
             binding.btnNearbyStations,
             binding.btnProfile
