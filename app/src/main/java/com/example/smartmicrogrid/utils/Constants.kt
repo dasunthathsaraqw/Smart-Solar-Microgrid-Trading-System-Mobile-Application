@@ -31,6 +31,12 @@ object Constants {
     const val STATUS_COMPLETED = "Completed"
     const val STATUS_CANCELLED = "Cancelled"
 
+    // ==================== RESERVATION ACTION ====================
+    // ReservationActionResponse.action: what the last prosumer action was
+    const val ACTION_CREATED = "Created"
+    const val ACTION_UPDATED = "Updated"
+    const val ACTION_CANCELLED = "Cancelled"
+
     /// ==================== SESSION PREFS ====================
     const val PREF_NAME = "solar_microgrid_prefs"
     const val KEY_JWT = "jwt_token"
