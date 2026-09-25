@@ -56,6 +56,21 @@ class SessionManager(context: Context) {
         }
     }
 
+    /**
+     * Refreshes the cached display info after the profile was loaded or edited, without touching
+     * the JWT, role, station or expiry. The dashboard and home screens read name/email from here.
+     * [nic] is only written when non-null (it can't change, but a failed profile fetch at login
+     * can leave it unset).
+     */
+    fun updateProfileInfo(name: String, email: String, nic: String? = null) {
+        prefs.edit().apply {
+            putString(Constants.KEY_NAME, name)
+            putString(Constants.KEY_EMAIL, email)
+            if (nic != null) putString(Constants.KEY_NIC, nic)
+            apply()
+        }
+    }
+
     fun getJwt(): String? = prefs.getString(Constants.KEY_JWT, null)
     fun getUserType(): String? = prefs.getString(Constants.KEY_USER_TYPE, null)
     fun getEmail(): String? = prefs.getString(Constants.KEY_EMAIL, null)
