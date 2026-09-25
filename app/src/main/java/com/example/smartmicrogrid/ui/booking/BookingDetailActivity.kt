@@ -14,6 +14,7 @@ import com.example.smartmicrogrid.databinding.ActivityBookingDetailBinding
 import com.example.smartmicrogrid.databinding.DialogCancelReasonBinding
 import com.example.smartmicrogrid.ui.common.applyReservationStatus
 import com.example.smartmicrogrid.ui.common.handleSessionExpired
+import com.example.smartmicrogrid.ui.common.showIfCached
 import com.example.smartmicrogrid.utils.Constants
 import com.example.smartmicrogrid.utils.DateUtils
 import com.example.smartmicrogrid.viewmodel.BookingActionState
@@ -119,6 +120,9 @@ class BookingDetailActivity : AppCompatActivity() {
 
     private fun observeDetailState() {
         viewModel.state.observe(this) { state ->
+            // Shown only for cached data; every other state (fresh, loading, error) clears it.
+            binding.cachedBanner.showIfCached((state as? BookingDetailState.Success)?.lastSyncedAt)
+
             when (state) {
                 BookingDetailState.Loading -> {
                     detailLoading = true

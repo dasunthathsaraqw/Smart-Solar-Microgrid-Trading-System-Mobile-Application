@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.smartmicrogrid.databinding.ActivityMyBookingsBinding
 import com.example.smartmicrogrid.ui.common.handleSessionExpired
+import com.example.smartmicrogrid.ui.common.showIfCached
 import com.example.smartmicrogrid.utils.Constants
 import com.example.smartmicrogrid.viewmodel.BookingListState
 import com.example.smartmicrogrid.viewmodel.MyBookingsViewModel
@@ -84,6 +85,9 @@ class MyBookingsActivity : AppCompatActivity() {
 
     private fun observeState() {
         viewModel.state.observe(this) { state ->
+            // Shown only for cached data; every other state (fresh, loading, error) clears it.
+            binding.cachedBanner.showIfCached((state as? BookingListState.Success)?.lastSyncedAt)
+
             when (state) {
                 BookingListState.Loading -> showOnly(binding.progressBar)
 

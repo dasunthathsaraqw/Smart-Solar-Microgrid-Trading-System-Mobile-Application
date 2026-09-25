@@ -15,6 +15,7 @@ import com.example.smartmicrogrid.databinding.ActivityProsumerHomeBinding
 import com.example.smartmicrogrid.ui.auth.LoginActivity
 import com.example.smartmicrogrid.ui.booking.MyBookingsActivity
 import com.example.smartmicrogrid.ui.booking.StationPickerActivity
+import com.example.smartmicrogrid.ui.common.showIfCached
 import com.example.smartmicrogrid.ui.maps.NearbyStationsActivity
 import com.example.smartmicrogrid.ui.profile.ProfileActivity
 import com.example.smartmicrogrid.utils.Constants
@@ -101,6 +102,9 @@ class ProsumerHomeActivity : AppCompatActivity() {
 
     private fun observeDashboardState() {
         viewModel.dashboardState.observe(this) { state ->
+            // Shown only for cached data; every other state (fresh, loading, error) clears it.
+            binding.cachedBanner.showIfCached((state as? DashboardState.Success)?.lastSyncedAt)
+
             when (state) {
                 DashboardState.Loading -> showLoading()
 

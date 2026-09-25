@@ -13,6 +13,7 @@ import com.example.smartmicrogrid.data.remote.dto.UpdateOwnProfileRequest
 import com.example.smartmicrogrid.databinding.ActivityProfileBinding
 import com.example.smartmicrogrid.databinding.DialogChangePasswordBinding
 import com.example.smartmicrogrid.ui.common.handleSessionExpired
+import com.example.smartmicrogrid.ui.common.showIfCached
 import com.example.smartmicrogrid.viewmodel.ProfileActionState
 import com.example.smartmicrogrid.viewmodel.ProfileState
 import com.example.smartmicrogrid.viewmodel.ProfileViewModel
@@ -98,6 +99,9 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun observeProfileState() {
         viewModel.profileState.observe(this) { state ->
+            // Shown only for cached data; every other state (fresh, loading, error) clears it.
+            binding.cachedBanner.showIfCached((state as? ProfileState.Success)?.lastSyncedAt)
+
             when (state) {
                 ProfileState.Loading -> {
                     profileLoading = true

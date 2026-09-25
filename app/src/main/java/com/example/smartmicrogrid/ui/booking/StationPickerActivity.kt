@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.smartmicrogrid.data.remote.dto.StationResponse
 import com.example.smartmicrogrid.databinding.ActivityStationPickerBinding
 import com.example.smartmicrogrid.ui.common.handleSessionExpired
+import com.example.smartmicrogrid.ui.common.showIfCached
 import com.example.smartmicrogrid.viewmodel.StationListState
 import com.example.smartmicrogrid.viewmodel.StationPickerViewModel
 
@@ -46,6 +47,9 @@ class StationPickerActivity : AppCompatActivity() {
 
     private fun observeState() {
         viewModel.state.observe(this) { state ->
+            // Shown only for cached data; every other state (fresh, loading, error) clears it.
+            binding.cachedBanner.showIfCached((state as? StationListState.Success)?.lastSyncedAt)
+
             when (state) {
                 StationListState.Loading -> showOnly(binding.progressBar)
 
