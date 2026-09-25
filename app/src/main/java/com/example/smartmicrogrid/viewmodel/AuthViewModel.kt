@@ -6,10 +6,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.smartmicrogrid.data.local.AppDatabase
 import com.example.smartmicrogrid.data.remote.dto.LoginResponse
 import com.example.smartmicrogrid.data.remote.dto.RegisterProsumerRequest
 import com.example.smartmicrogrid.data.repository.ApiResult
 import com.example.smartmicrogrid.data.repository.AuthRepository
+import com.example.smartmicrogrid.data.repository.quietly
 import com.example.smartmicrogrid.utils.Constants
 import com.example.smartmicrogrid.utils.SessionManager
 import kotlinx.coroutines.launch
@@ -85,6 +87,11 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private suspend fun onLoginSuccess(login: LoginResponse) {
+        // A new login starts with an empty offline cache, so it can never show the previous
+        // user's bookings or profile (logout already clears it; this is the backstop, and it is
+        // awaited so nothing can be written before it finishes).
+        quietly { AppDatabase.getInstance(getApplication<Application>()).clearCache() }
+
         // Save first: the AuthInterceptor reads the JWT from SessionManager for the next call.
         persistSession(login, nic = null)
 
