@@ -94,6 +94,12 @@ dependencies {
 
     // ===== Testing (already there) =====
     testImplementation(libs.junit)
+
+    // ===== Unit testing (JVM tests in app/src/test — no emulator needed) =====
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.mockk)
+    testImplementation(libs.arch.core.testing)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

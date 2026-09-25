@@ -25,6 +25,10 @@ glide = "4.16.0"
 coroutines = "1.8.1"
 securityCrypto = "1.1.0-alpha06"
 
+# ===== UNIT TESTING (JVM tests in app/src/test) =====
+mockk = "1.13.12"
+archCoreTesting = "2.2.0"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -75,6 +79,15 @@ coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutin
 
 # Security (encrypted SharedPreferences for JWT)
 security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
+
+# Unit testing (JVM)
+# kotlinx-coroutines-test: run suspend functions / viewModelScope code deterministically in tests.
+#   Deliberately shares the "coroutines" version with coroutines-android so the two can't drift apart.
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+# mockk: create fake versions of classes (repositories, SessionManager) for a test to control.
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+# core-testing: InstantTaskExecutorRule, so LiveData updates run synchronously without Android.
+arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCoreTesting" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
