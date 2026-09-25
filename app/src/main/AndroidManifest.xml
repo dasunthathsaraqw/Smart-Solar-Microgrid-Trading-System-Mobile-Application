@@ -66,6 +66,25 @@
             android:name=".ui.operator.OperatorHomeActivity"
             android:exported="false" />
 
+        <!-- ==================== BOOKING (CREATE FLOW) ==================== -->
+
+        <activity
+            android:name=".ui.booking.StationPickerActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.booking.SlotPickerActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.booking.ConfirmBookingActivity"
+            android:exported="false" />
+
+        <!-- Reusable: also the result screen for update/cancel in the next round -->
+        <activity
+            android:name=".ui.booking.BookingSummaryActivity"
+            android:exported="false" />
+
         <!-- MainActivity is intentionally NOT registered (Android Studio template leftover). -->
 
     </application>
