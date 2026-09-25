@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.smartmicrogrid.data.remote.dto.StationResponse
-import com.example.smartmicrogrid.data.repository.ApiResult
+import com.example.smartmicrogrid.data.repository.CachedResult
 import com.example.smartmicrogrid.data.repository.StationRepository
 import kotlinx.coroutines.launch
 
@@ -27,8 +27,17 @@ sealed class StationListState {
     /** A request is in flight — show spinner, hide list/error. */
     object Loading : StationListState()
 
-    /** Stations loaded (may be empty). */
-    data class Success(val stations: List<StationResponse>) : StationListState()
+    /**
+     * Stations loaded (may be empty). [lastSyncedAt] is null for fresh data; when the server
+     * couldn't be reached it is the epoch-millisecond time of the fetch the cached copy came from.
+     */
+    data class Success(
+        val stations: List<StationResponse>,
+        val lastSyncedAt: Long? = null
+    ) : StationListState() {
+        /** True when this is the offline cache's copy, not a fresh fetch. */
+        val isCached: Boolean get() = lastSyncedAt != null
+    }
 
     /** Load failed with a user-readable [message]; [code] is the HTTP status, null for network. */
     data class Error(val message: String, val code: Int? = null) : StationListState()
@@ -52,9 +61,11 @@ class StationPickerViewModel(application: Application) : AndroidViewModel(applic
         _state.value = StationListState.Loading
         viewModelScope.launch {
             when (val result = repo.getStations()) {
-                is ApiResult.Success -> _state.value = StationListState.Success(result.data)
-                is ApiResult.Error -> _state.value =
-                    StationListState.Error(result.message, result.code)
+                is CachedResult.Fresh -> _state.value = StationListState.Success(result.data)
+                is CachedResult.Cached -> _state.value =
+                    StationListState.Success(result.data, result.lastSyncedAt)
+                is CachedResult.Failed -> _state.value =
+                    StationListState.Error(result.error.message, result.error.code)
             }
         }
     }

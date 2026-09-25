@@ -11,6 +11,7 @@ import com.example.smartmicrogrid.data.remote.dto.ProsumerResponse
 import com.example.smartmicrogrid.data.remote.dto.UpdateOwnProfileRequest
 import com.example.smartmicrogrid.data.repository.ApiResult
 import com.example.smartmicrogrid.data.repository.AuthRepository
+import com.example.smartmicrogrid.data.repository.CachedResult
 import com.example.smartmicrogrid.utils.Constants
 import com.example.smartmicrogrid.utils.SessionManager
 import kotlinx.coroutines.launch
@@ -40,8 +41,18 @@ sealed class ProfileState {
     /** The profile is being loaded — show spinner, hide content/error. */
     object Loading : ProfileState()
 
-    /** The current profile, as last loaded from or saved to the server. */
-    data class Success(val profile: ProsumerResponse) : ProfileState()
+    /**
+     * The current profile, as last loaded from or saved to the server. [lastSyncedAt] is null for
+     * fresh data; when the server couldn't be reached it is the epoch-millisecond time of the
+     * fetch the cached copy came from.
+     */
+    data class Success(
+        val profile: ProsumerResponse,
+        val lastSyncedAt: Long? = null
+    ) : ProfileState() {
+        /** True when this is the offline cache's copy, not a fresh fetch. */
+        val isCached: Boolean get() = lastSyncedAt != null
+    }
 
     /** Load failed with a user-readable [message]; [code] is the HTTP status, null for network. */
     data class Error(val message: String, val code: Int? = null) : ProfileState()
@@ -86,10 +97,11 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
 
         _profileState.value = ProfileState.Loading
         viewModelScope.launch {
-            when (val result = repo.getMyProfile()) {
-                is ApiResult.Success -> showProfile(result.data)
-                is ApiResult.Error -> _profileState.value =
-                    ProfileState.Error(result.message, result.code)
+            when (val result = repo.getMyProfileCached()) {
+                is CachedResult.Fresh -> showProfile(result.data)
+                is CachedResult.Cached -> showProfile(result.data, result.lastSyncedAt)
+                is CachedResult.Failed -> _profileState.value =
+                    ProfileState.Error(result.error.message, result.error.code)
             }
         }
     }
@@ -149,7 +161,8 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
      * the screen shows the "requested" state and the button can't be used twice.
      */
     fun requestDeactivation() {
-        val current = (_profileState.value as? ProfileState.Success)?.profile
+        val currentState = _profileState.value as? ProfileState.Success
+        val current = currentState?.profile
         if (current?.deactivationRequested == true) {
             if (!isBusy()) {
                 _actionState.value =
@@ -161,7 +174,10 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         runAction {
             when (val result = repo.requestDeactivation()) {
                 is ApiResult.Success -> {
-                    current?.let { showProfile(it.copy(deactivationRequested = true)) }
+                    // Keep the sync time: if this profile was the cached copy, it is still that.
+                    current?.let {
+                        showProfile(it.copy(deactivationRequested = true), currentState.lastSyncedAt)
+                    }
                     ProfileActionState.Success(string(R.string.msg_deactivation_requested))
                 }
                 is ApiResult.Error -> ProfileActionState.Error(result.message, result.code)
@@ -193,10 +209,16 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch { _actionState.value = block() }
     }
 
-    /** Makes [profile] the current one and mirrors its display info into the session. */
-    private fun showProfile(profile: ProsumerResponse) {
-        session.updateProfileInfo(profile.name, profile.email, profile.nic)
-        _profileState.value = ProfileState.Success(profile)
+    /**
+     * Makes [profile] the current one. Fresh data ([lastSyncedAt] null) is also mirrored into the
+     * session's cached name/email; a cached copy is not — it can only be as old as the last sync,
+     * so it must never overwrite what the session already holds.
+     */
+    private fun showProfile(profile: ProsumerResponse, lastSyncedAt: Long? = null) {
+        if (lastSyncedAt == null) {
+            session.updateProfileInfo(profile.name, profile.email, profile.nic)
+        }
+        _profileState.value = ProfileState.Success(profile, lastSyncedAt)
     }
 
     private fun string(resId: Int): String = getApplication<Application>().getString(resId)

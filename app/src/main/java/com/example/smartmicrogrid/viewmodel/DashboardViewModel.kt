@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.smartmicrogrid.data.remote.dto.ProsumerDashboardResponse
-import com.example.smartmicrogrid.data.repository.ApiResult
+import com.example.smartmicrogrid.data.repository.CachedResult
 import com.example.smartmicrogrid.data.repository.DashboardRepository
 import com.example.smartmicrogrid.utils.SessionManager
 import kotlinx.coroutines.launch
@@ -30,8 +30,17 @@ sealed class DashboardState {
     /** A request is in flight — show spinner, hide content/error. */
     object Loading : DashboardState()
 
-    /** Dashboard loaded. */
-    data class Success(val data: ProsumerDashboardResponse) : DashboardState()
+    /**
+     * Dashboard loaded. [lastSyncedAt] is null for fresh data; when the server couldn't be
+     * reached it is the epoch-millisecond time of the fetch the cached copy came from.
+     */
+    data class Success(
+        val data: ProsumerDashboardResponse,
+        val lastSyncedAt: Long? = null
+    ) : DashboardState() {
+        /** True when this is the offline cache's copy, not a fresh fetch. */
+        val isCached: Boolean get() = lastSyncedAt != null
+    }
 
     /**
      * Load failed with a user-readable [message]. [code] is the HTTP status (401, 403, 500, …)
@@ -70,9 +79,11 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         _dashboardState.value = DashboardState.Loading
         viewModelScope.launch {
             when (val result = repo.getMyDashboard()) {
-                is ApiResult.Success -> _dashboardState.value = DashboardState.Success(result.data)
-                is ApiResult.Error -> _dashboardState.value =
-                    DashboardState.Error(result.message, result.code)
+                is CachedResult.Fresh -> _dashboardState.value = DashboardState.Success(result.data)
+                is CachedResult.Cached -> _dashboardState.value =
+                    DashboardState.Success(result.data, result.lastSyncedAt)
+                is CachedResult.Failed -> _dashboardState.value =
+                    DashboardState.Error(result.error.message, result.error.code)
             }
         }
     }

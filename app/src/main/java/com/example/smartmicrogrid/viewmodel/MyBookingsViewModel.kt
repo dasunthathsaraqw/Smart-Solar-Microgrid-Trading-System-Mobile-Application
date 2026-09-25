@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.smartmicrogrid.data.remote.dto.ReservationResponse
-import com.example.smartmicrogrid.data.repository.ApiResult
+import com.example.smartmicrogrid.data.repository.CachedResult
 import com.example.smartmicrogrid.data.repository.ReservationRepository
 import com.example.smartmicrogrid.utils.Constants
 import kotlinx.coroutines.Job
@@ -30,8 +30,18 @@ sealed class BookingListState {
     /** A request is in flight — show spinner, hide list/empty/error. */
     object Loading : BookingListState()
 
-    /** Reservations loaded for the selected tab (may be empty). */
-    data class Success(val bookings: List<ReservationResponse>) : BookingListState()
+    /**
+     * Reservations loaded for the selected tab (may be empty). [lastSyncedAt] is null for fresh
+     * data; when the server couldn't be reached it is the epoch-millisecond time of the fetch the
+     * cached copy came from.
+     */
+    data class Success(
+        val bookings: List<ReservationResponse>,
+        val lastSyncedAt: Long? = null
+    ) : BookingListState() {
+        /** True when this is the offline cache's copy, not a fresh fetch. */
+        val isCached: Boolean get() = lastSyncedAt != null
+    }
 
     /** Load failed with a user-readable [message]; [code] is the HTTP status, null for network. */
     data class Error(val message: String, val code: Int? = null) : BookingListState()
@@ -72,9 +82,11 @@ class MyBookingsViewModel(application: Application) : AndroidViewModel(applicati
         _state.value = BookingListState.Loading
         loadJob = viewModelScope.launch {
             when (val result = repo.getMyReservations(status)) {
-                is ApiResult.Success -> _state.value = BookingListState.Success(result.data)
-                is ApiResult.Error -> _state.value =
-                    BookingListState.Error(result.message, result.code)
+                is CachedResult.Fresh -> _state.value = BookingListState.Success(result.data)
+                is CachedResult.Cached -> _state.value =
+                    BookingListState.Success(result.data, result.lastSyncedAt)
+                is CachedResult.Failed -> _state.value =
+                    BookingListState.Error(result.error.message, result.error.code)
             }
         }
     }
