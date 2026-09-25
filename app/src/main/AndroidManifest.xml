@@ -66,6 +66,16 @@
             android:name=".ui.operator.OperatorHomeActivity"
             android:exported="false" />
 
+        <!-- ==================== OPERATOR (READ-ONLY SCREENS) ==================== -->
+
+        <activity
+            android:name=".ui.operator.PendingApprovalsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.operator.CompletedHistoryActivity"
+            android:exported="false" />
+
         <!-- ==================== BOOKING (CREATE FLOW) ==================== -->
 
         <activity
