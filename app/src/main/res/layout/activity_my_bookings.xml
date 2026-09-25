@@ -67,6 +67,18 @@
             android:layout_height="wrap_content"
             android:text="@string/tab_all" />
     </com.google.android.material.tabs.TabLayout>
+    <!-- ==================== OFFLINE CACHE BANNER ==================== -->
+    <!-- Hidden unless the screen is showing cached data; content below is anchored to it, so it
+         takes no space when hidden. -->
+    <include
+        android:id="@+id/cachedBanner"
+        layout="@layout/view_cached_banner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout" />
 
     <!-- ==================== LIST ==================== -->
     <androidx.recyclerview.widget.RecyclerView
@@ -80,7 +92,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:layout_constraintTop_toBottomOf="@id/cachedBanner"
         tools:listitem="@layout/item_booking"
         tools:visibility="visible" />
 
@@ -94,7 +106,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tabLayout" />
+        app:layout_constraintTop_toBottomOf="@id/cachedBanner" />
 
     <!-- ==================== EMPTY ==================== -->
     <TextView
@@ -110,7 +122,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:layout_constraintTop_toBottomOf="@id/cachedBanner"
         tools:visibility="gone" />
 
     <!-- ==================== ERROR ==================== -->
@@ -125,7 +137,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:layout_constraintTop_toBottomOf="@id/cachedBanner"
         tools:visibility="gone">
 
         <TextView
