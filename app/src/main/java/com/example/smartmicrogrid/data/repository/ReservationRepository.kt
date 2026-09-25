@@ -10,12 +10,14 @@ import com.example.smartmicrogrid.data.remote.dto.QrTokenResponse
 import com.example.smartmicrogrid.data.remote.dto.ReservationActionResponse
 import com.example.smartmicrogrid.data.remote.dto.ReservationResponse
 import com.example.smartmicrogrid.data.remote.dto.UpdateReservationRequest
+import com.example.smartmicrogrid.data.remote.dto.VerifyQrRequest
 
 /**
  * File: ReservationRepository.kt
  * Purpose: Reservation operations. Prosumer side: create, list, detail, update (move to a new
- *          slot), cancel, and fetch the QR token. Operator side (read-only): the pending
- *          approval queue and the paginated completed history. Wraps every Retrofit call in
+ *          slot), cancel, and fetch the QR token. Operator side: the read-only pending approval
+ *          queue and completed history, and the QR check-in (verify a scanned token, then
+ *          complete it). Wraps every Retrofit call in
  *          safeApiCall so callers only ever deal with ApiResult. The server enforces every
  *          booking rule; its message comes back in ApiResult.Error.
  * Author: Mobile Team
@@ -111,4 +113,21 @@ class ReservationRepository(context: Context) {
                 pageSize = pageSize
             )
         }
+
+    // ==================== OPERATOR QR CHECK-IN ====================
+
+    /**
+     * POST /api/reservations/verify-qr — DRY RUN. Checks that [qrToken] is valid for
+     * [stationId] and returns the reservation it belongs to. Nothing is changed.
+     */
+    suspend fun verifyQr(qrToken: String, stationId: String): ApiResult<ReservationResponse> =
+        safeApiCall { api.verifyQr(VerifyQrRequest(qrToken.trim(), stationId)) }
+
+    /**
+     * POST /api/reservations/scan-complete — verifies [qrToken] for [stationId] AND marks the
+     * reservation Completed, atomically. This is the real charging-session completion and
+     * can't be undone from the app.
+     */
+    suspend fun scanComplete(qrToken: String, stationId: String): ApiResult<ReservationResponse> =
+        safeApiCall { api.scanComplete(VerifyQrRequest(qrToken.trim(), stationId)) }
 }
