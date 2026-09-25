@@ -3,6 +3,7 @@ package com.example.smartmicrogrid.ui.booking
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,8 @@ import com.example.smartmicrogrid.utils.DateUtils
  * Date: 2026
  */
 class SlotAdapter(
+    /** Text of each row's button — "Select" for booking, "Edit" for the operator's slot list. */
+    @StringRes private val actionLabelRes: Int = R.string.action_select,
     private val onSlotSelected: (SlotResponse) -> Unit
 ) : ListAdapter<SlotResponse, SlotAdapter.SlotViewHolder>(SlotDiff) {
 
@@ -37,6 +40,8 @@ class SlotAdapter(
             tvSlotTime.text = DateUtils.formatSlotRange(context, slot.startTime, slot.endTime)
             tvCapacity.text = "${context.getString(R.string.label_capacity)}: " +
                 context.getString(R.string.value_capacity_kw, slot.capacityKw)
+
+            btnSelect.setText(actionLabelRes)
 
             val select = View.OnClickListener { onSlotSelected(slot) }
             root.setOnClickListener(select)
