@@ -15,6 +15,7 @@ import com.example.smartmicrogrid.databinding.ActivityProsumerHomeBinding
 import com.example.smartmicrogrid.ui.auth.LoginActivity
 import com.example.smartmicrogrid.ui.booking.MyBookingsActivity
 import com.example.smartmicrogrid.ui.booking.StationPickerActivity
+import com.example.smartmicrogrid.ui.maps.NearbyStationsActivity
 import com.example.smartmicrogrid.utils.Constants
 import com.example.smartmicrogrid.utils.DateUtils
 import com.example.smartmicrogrid.utils.SessionManager
@@ -74,14 +75,13 @@ class ProsumerHomeActivity : AppCompatActivity() {
             startActivity(Intent(this, MyBookingsActivity::class.java))
         }
 
-        // These screens don't exist yet — no broken Intents, just a toast.
-        listOf(
-            binding.btnNearbyStations,
-            binding.btnProfile
-        ).forEach { button ->
-            button.setOnClickListener {
-                Toast.makeText(this, R.string.msg_coming_soon, Toast.LENGTH_SHORT).show()
-            }
+        binding.btnNearbyStations.setOnClickListener {
+            startActivity(Intent(this, NearbyStationsActivity::class.java))
+        }
+
+        // Profile doesn't exist yet — no broken Intent, just a toast.
+        binding.btnProfile.setOnClickListener {
+            Toast.makeText(this, R.string.msg_coming_soon, Toast.LENGTH_SHORT).show()
         }
 
         binding.btnLogout.setOnClickListener {
