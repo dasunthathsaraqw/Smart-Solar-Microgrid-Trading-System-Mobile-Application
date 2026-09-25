@@ -1,7 +1,6 @@
 package com.example.smartmicrogrid.viewmodel
 
 import android.app.Application
-import android.util.Patterns
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,6 +13,7 @@ import com.example.smartmicrogrid.data.repository.AuthRepository
 import com.example.smartmicrogrid.data.repository.quietly
 import com.example.smartmicrogrid.utils.Constants
 import com.example.smartmicrogrid.utils.SessionManager
+import com.example.smartmicrogrid.utils.Validators
 import kotlinx.coroutines.launch
 
 /**
@@ -50,10 +50,18 @@ sealed class AuthState {
 
 // ==================== VIEWMODEL ====================
 
-class AuthViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repo = AuthRepository(application.applicationContext)
-    private val session = SessionManager(application.applicationContext)
+/**
+ * The repository, session and cache-wipe step are constructor parameters that default to the real
+ * ones, so the app behaves exactly as before while a unit test can pass fakes. @JvmOverloads keeps
+ * the plain (Application) constructor that Android's default ViewModel factory looks for, so
+ * `by viewModels()` in the Activities is unaffected.
+ */
+class AuthViewModel @JvmOverloads constructor(
+    application: Application,
+    private val repo: AuthRepository = AuthRepository(application.applicationContext),
+    private val session: SessionManager = SessionManager(application.applicationContext),
+    private val cacheCleaner: suspend () -> Unit = { AppDatabase.getInstance(application).clearCache() }
+) : AndroidViewModel(application) {
 
     private val _loginState = MutableLiveData<AuthState>(AuthState.Idle)
     val loginState: LiveData<AuthState> = _loginState
@@ -90,7 +98,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         // A new login starts with an empty offline cache, so it can never show the previous
         // user's bookings or profile (logout already clears it; this is the backstop, and it is
         // awaited so nothing can be written before it finishes).
-        quietly { AppDatabase.getInstance(getApplication<Application>()).clearCache() }
+        quietly { cacheCleaner() }
 
         // Save first: the AuthInterceptor reads the JWT from SessionManager for the next call.
         persistSession(login, nic = null)
@@ -161,7 +169,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun validateLogin(email: String, password: String): String? = when {
         email.isEmpty() -> "Email is required."
-        !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> "Enter a valid email address."
+        !Validators.isValidEmail(email) -> "Enter a valid email address."
         password.isEmpty() -> "Password is required."
         else -> null
     }
@@ -170,7 +178,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         request.nic.isEmpty() -> "NIC is required."
         request.name.isEmpty() -> "Full name is required."
         request.email.isEmpty() -> "Email is required."
-        !Patterns.EMAIL_ADDRESS.matcher(request.email).matches() -> "Enter a valid email address."
+        !Validators.isValidEmail(request.email) -> "Enter a valid email address."
         request.contactNumber.isEmpty() -> "Contact number is required."
         request.address.isEmpty() -> "Address is required."
         request.panelCapacityKw <= 0.0 -> "Panel capacity must be greater than 0."
