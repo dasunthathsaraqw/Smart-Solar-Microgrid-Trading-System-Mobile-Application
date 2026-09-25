@@ -204,4 +204,38 @@
     <!-- ==================== OPERATOR: ADDITIONS (not in the requested list) ==================== -->
     <!-- Operator rows and the read-only detail sheet show WHO booked, not just where -->
     <string name="label_prosumer_name">Prosumer</string>
+
+    <!-- ==================== QR SCANNER ==================== -->
+    <string name="title_qr_scanner">Scan QR code</string>
+    <string name="msg_scanning">Point the camera at the prosumer\'s QR code</string>
+    <string name="msg_verifying">Verifying QR code…</string>
+    <string name="msg_completing">Completing charge…</string>
+    <string name="label_scan_result">Scan result</string>
+    <string name="action_complete_charge">Complete Charge</string>
+    <string name="action_scan_again">Scan Again</string>
+    <string name="msg_scan_complete_success">Charging session completed</string>
+    <string name="error_verifying_qr">Couldn\'t verify this QR code</string>
+    <string name="error_completing_scan">Couldn\'t complete the charge</string>
+    <string name="msg_camera_permission_denied">Camera permission is needed to scan QR codes.</string>
+
+    <!-- ==================== SLOT MANAGEMENT ==================== -->
+    <string name="title_slot_management">Manage slots</string>
+    <string name="label_no_slots">No upcoming unbooked slots to manage</string>
+    <string name="action_edit_slot">Edit</string>
+    <string name="title_edit_slot">Edit slot</string>
+    <string name="label_start_time">Start time</string>
+    <string name="label_end_time">End time</string>
+    <string name="action_save_slot">Save</string>
+    <string name="error_updating_slot">Couldn\'t update the slot</string>
+
+    <!-- ==================== OPERATOR ROUND 2: ADDITIONS (not in the requested list) ==================== -->
+    <!-- Shown with the verified reservation: completing is the real, irreversible step -->
+    <string name="msg_complete_charge_warning">Completing marks this reservation as done and can\'t be undone.</string>
+    <!-- Slot editing: date and time are chosen with pickers, not typed -->
+    <string name="title_select_date">Select date</string>
+    <string name="title_select_time">Select time</string>
+    <string name="msg_slot_updated">Slot updated</string>
+    <string name="msg_no_changes">No changes to save</string>
+    <!-- Dashboard button (title case, like its neighbours; title_slot_management is the toolbar title) -->
+    <string name="action_manage_slots">Manage Slots</string>
 </resources>
