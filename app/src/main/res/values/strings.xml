@@ -63,4 +63,46 @@
     <string name="error_loading_dashboard">Couldn\'t load your dashboard</string>
     <string name="action_retry">Retry</string>
     <string name="msg_session_expired">Your session has expired. Please log in again.</string>
+
+    <!-- ==================== BOOKING: TITLES ==================== -->
+    <string name="title_select_station">Select a station</string>
+    <string name="title_select_slot">Select a slot</string>
+    <string name="title_confirm_booking">Confirm booking</string>
+    <string name="title_booking_summary">Booking summary</string>
+
+    <!-- ==================== BOOKING: LABELS ==================== -->
+    <string name="label_station_name">Station</string>
+    <string name="label_capacity">Capacity</string>
+    <string name="label_schedule">Schedule</string>
+    <string name="label_available_slots">Available slots</string>
+    <string name="label_slot_time">Slot time</string>
+    <string name="label_no_slots_available">No slots available</string>
+    <string name="label_summary_message">Message</string>
+    <string name="label_hours_until_slot">Hours until slot</string>
+    <string name="label_can_still_modify_yes">You can still modify this reservation</string>
+    <string name="label_can_still_modify_no">This reservation can no longer be modified</string>
+
+    <!-- ==================== BOOKING: ACTIONS ==================== -->
+    <string name="action_select">Select</string>
+    <string name="action_confirm_booking">Confirm booking</string>
+    <string name="action_done">Done</string>
+    <string name="action_view_my_bookings">View My Bookings</string>
+
+    <!-- ==================== BOOKING: ERRORS ==================== -->
+    <string name="error_loading_stations">Couldn\'t load stations</string>
+    <string name="error_loading_slots">Couldn\'t load slots</string>
+    <string name="error_creating_booking">Couldn\'t create your booking</string>
+
+    <!-- ==================== BOOKING: ADDITIONS (not in the requested list) ==================== -->
+    <!-- Value formats: capacity is a Double kW, hours-until-slot a Double -->
+    <string name="value_capacity_kw">%1$.1f kW</string>
+    <string name="value_hours">%1$.1f hours</string>
+    <string name="label_status">Status</string>
+    <string name="label_no_stations">No stations available</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_navigate_up">Navigate up</string>
+    <!-- Summary headline per ReservationActionResponse.action (shared with the next round) -->
+    <string name="label_action_created">Reservation created</string>
+    <string name="label_action_updated">Reservation updated</string>
+    <string name="label_action_cancelled">Reservation cancelled</string>
 </resources>
