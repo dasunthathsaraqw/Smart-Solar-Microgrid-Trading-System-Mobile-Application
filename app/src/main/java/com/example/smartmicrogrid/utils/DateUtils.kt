@@ -88,6 +88,16 @@ object DateUtils {
             formatTimeForDisplay(endIso)
         )
 
+    /**
+     * Formats a moment given as epoch milliseconds (like the cache's lastSyncedAt) with
+     * [Constants.DISPLAY_DATE_FORMAT] in the device's time zone, e.g. "25 Sep 2026, 14:00".
+     */
+    fun formatMillisForDisplay(epochMillis: Long): String =
+        DateTimeFormatter
+            .ofPattern(Constants.DISPLAY_DATE_FORMAT, Locale.getDefault())
+            .withZone(ZoneId.systemDefault())
+            .format(Instant.ofEpochMilli(epochMillis))
+
     // ==================== TO THE BACKEND ====================
 
     /**
