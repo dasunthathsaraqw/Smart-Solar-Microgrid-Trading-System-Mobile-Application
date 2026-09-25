@@ -5,6 +5,7 @@ import com.example.smartmicrogrid.data.remote.ApiService
 import com.example.smartmicrogrid.data.remote.RetrofitClient
 import com.example.smartmicrogrid.data.remote.dto.CancelReservationRequest
 import com.example.smartmicrogrid.data.remote.dto.CreateOwnReservationRequest
+import com.example.smartmicrogrid.data.remote.dto.PagedResult
 import com.example.smartmicrogrid.data.remote.dto.QrTokenResponse
 import com.example.smartmicrogrid.data.remote.dto.ReservationActionResponse
 import com.example.smartmicrogrid.data.remote.dto.ReservationResponse
@@ -12,10 +13,11 @@ import com.example.smartmicrogrid.data.remote.dto.UpdateReservationRequest
 
 /**
  * File: ReservationRepository.kt
- * Purpose: Prosumer reservation operations — create, list, detail, update (move to a new slot),
- *          cancel, and fetch the QR token. Wraps every Retrofit call in safeApiCall so callers
- *          only ever deal with ApiResult. The server enforces every booking rule; its message
- *          comes back in ApiResult.Error.
+ * Purpose: Reservation operations. Prosumer side: create, list, detail, update (move to a new
+ *          slot), cancel, and fetch the QR token. Operator side (read-only): the pending
+ *          approval queue and the paginated completed history. Wraps every Retrofit call in
+ *          safeApiCall so callers only ever deal with ApiResult. The server enforces every
+ *          booking rule; its message comes back in ApiResult.Error.
  * Author: Mobile Team
  * Date: 2026
  */
@@ -77,5 +79,36 @@ class ReservationRepository(context: Context) {
     ): ApiResult<ReservationActionResponse> =
         safeApiCall {
             api.cancelMyReservation(id, CancelReservationRequest(reason?.trim()?.takeIf { it.isNotEmpty() }))
+        }
+
+    // ==================== OPERATOR (READ-ONLY) ====================
+
+    /**
+     * GET /api/reports/pending-approvals — the queue of reservations awaiting approval, at most
+     * [count]. Read-only on mobile: approving happens in the web app (there is no approve call).
+     */
+    suspend fun getPendingApprovals(count: Int = 20): ApiResult<List<ReservationResponse>> =
+        safeApiCall { api.getPendingApprovals(count) }
+
+    /**
+     * GET /api/reservations/operator/history — Completed reservations of [stationId], newest
+     * page first as the server orders them; [page] is 1-based. [dateFrom]/[dateTo] are optional
+     * ISO date filters (blank = no filter).
+     */
+    suspend fun getCompletedHistory(
+        stationId: String,
+        dateFrom: String? = null,
+        dateTo: String? = null,
+        page: Int = 1,
+        pageSize: Int = 20
+    ): ApiResult<PagedResult<ReservationResponse>> =
+        safeApiCall {
+            api.getOperatorHistory(
+                stationId = stationId,
+                dateFrom = dateFrom?.takeIf { it.isNotBlank() },
+                dateTo = dateTo?.takeIf { it.isNotBlank() },
+                page = page,
+                pageSize = pageSize
+            )
         }
 }
