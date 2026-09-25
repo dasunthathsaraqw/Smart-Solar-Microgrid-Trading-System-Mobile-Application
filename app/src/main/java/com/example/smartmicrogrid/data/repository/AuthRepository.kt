@@ -1,6 +1,10 @@
 package com.example.smartmicrogrid.data.repository
 
 import android.content.Context
+import com.example.smartmicrogrid.data.local.AppDatabase
+import com.example.smartmicrogrid.data.local.dao.ProfileDao
+import com.example.smartmicrogrid.data.local.toEntity
+import com.example.smartmicrogrid.data.local.toResponse
 import com.example.smartmicrogrid.data.remote.ApiService
 import com.example.smartmicrogrid.data.remote.RetrofitClient
 import com.example.smartmicrogrid.data.remote.dto.ChangePasswordRequest
@@ -23,6 +27,7 @@ import com.example.smartmicrogrid.data.remote.dto.UpdateOwnProfileRequest
 class AuthRepository(context: Context) {
 
     private val api: ApiService = RetrofitClient.getApiService(context)
+    private val profileDao: ProfileDao = AppDatabase.getInstance(context).profileDao()
 
     // ==================== AUTH ====================
 
@@ -41,12 +46,25 @@ class AuthRepository(context: Context) {
         safeApiCall { api.registerProsumer(request) }
 
     /**
-     * GET /api/prosumers/me — own profile. Used right after a prosumer logs in, because
-     * the login response does not include the NIC (it is only a JWT claim server-side), and
-     * by the Profile screen.
+     * GET /api/prosumers/me — own profile, LIVE ONLY (a plain ApiResult, never the cache). Used
+     * right after a prosumer logs in, because the login response does not include the NIC (it is
+     * only a JWT claim server-side); that call must never be answered with someone's old data.
+     * The Profile screen uses [getMyProfileCached] instead.
      */
     suspend fun getMyProfile(): ApiResult<ProsumerResponse> =
         safeApiCall { api.getMyProfile() }
+
+    /**
+     * GET /api/prosumers/me for the Profile screen: network-first with the Room cache as
+     * fallback (returns a CachedResult). A successful fetch replaces the cached profile, so the
+     * table only ever holds the signed-in user's.
+     */
+    suspend fun getMyProfileCached(): CachedResult<ProsumerResponse> =
+        networkFirst(
+            fetch = { safeApiCall { api.getMyProfile() } },
+            save = { profileDao.replace(it.toEntity(System.currentTimeMillis())) },
+            readCache = { profileDao.get()?.let { it.toResponse() to it.lastSyncedAt } }
+        )
 
     // ==================== PROFILE (SELF-SERVICE) ====================
 
@@ -57,7 +75,12 @@ class AuthRepository(context: Context) {
      * ApiResult.Error.
      */
     suspend fun updateProfile(request: UpdateOwnProfileRequest): ApiResult<ProsumerResponse> =
-        safeApiCall { api.updateMyProfile(request) }
+        safeApiCall { api.updateMyProfile(request) }.also { result ->
+            // Write-through, so the offline copy shows the edit (the edit itself is never queued).
+            if (result is ApiResult.Success) {
+                quietly { profileDao.replace(result.data.toEntity(System.currentTimeMillis())) }
+            }
+        }
 
     /**
      * PUT /api/prosumers/me/password — changes the password. 204 No Content on success; a wrong
@@ -72,5 +95,13 @@ class AuthRepository(context: Context) {
      * (deactivationRequested = true) for Backoffice to act on.
      */
     suspend fun requestDeactivation(): ApiResult<Unit> =
-        safeApiCallUnit { api.requestDeactivation() }
+        safeApiCallUnit { api.requestDeactivation() }.also { result ->
+            // Write-through: the cached profile must show the pending request too. Its sync time
+            // is kept — nothing was re-fetched.
+            if (result is ApiResult.Success) {
+                quietly {
+                    profileDao.get()?.let { profileDao.replace(it.copy(deactivationRequested = true)) }
+                }
+            }
+        }
 }
