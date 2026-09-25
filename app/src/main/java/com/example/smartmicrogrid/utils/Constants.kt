@@ -24,6 +24,13 @@ object Constants {
     const val ROLE_OPERATOR = "GridOperator"   // ← matches backend role string
     const val ROLE_PROSUMER = "Prosumer"
 
+    // ==================== RESERVATION STATUS ====================
+    // Case-sensitive: must EXACTLY match ReservationResponse.status from the backend
+    const val STATUS_PENDING = "Pending"
+    const val STATUS_APPROVED = "Approved"
+    const val STATUS_COMPLETED = "Completed"
+    const val STATUS_CANCELLED = "Cancelled"
+
     /// ==================== SESSION PREFS ====================
     const val PREF_NAME = "solar_microgrid_prefs"
     const val KEY_JWT = "jwt_token"
@@ -40,4 +47,5 @@ object Constants {
     // ==================== MISC ====================
     const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
     const val DISPLAY_DATE_FORMAT = "dd MMM yyyy, HH:mm"
+    const val DISPLAY_TIME_FORMAT = "HH:mm"
 }
