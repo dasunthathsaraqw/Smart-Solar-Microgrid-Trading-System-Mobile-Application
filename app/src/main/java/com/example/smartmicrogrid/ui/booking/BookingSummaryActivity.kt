@@ -3,7 +3,6 @@ package com.example.smartmicrogrid.ui.booking
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -47,10 +46,7 @@ class BookingSummaryActivity : AppCompatActivity() {
         bindResponse(response)
 
         binding.btnDone.setOnClickListener { goToDashboard() }
-        binding.btnViewMyBookings.setOnClickListener {
-            // My Bookings doesn't exist yet.
-            Toast.makeText(this, R.string.msg_coming_soon, Toast.LENGTH_SHORT).show()
-        }
+        binding.btnViewMyBookings.setOnClickListener { openMyBookings() }
         // The flow is over: Back behaves like Done instead of returning into a finished step.
         onBackPressedDispatcher.addCallback(this) { goToDashboard() }
     }
@@ -105,6 +101,24 @@ class BookingSummaryActivity : AppCompatActivity() {
         startActivity(
             Intent(this, ProsumerHomeActivity::class.java)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
+        finish()
+    }
+
+    /**
+     * Opens My Bookings on top of the dashboard, discarding any booking-flow screens still in
+     * the back stack. A lone CLEAR_TOP on MyBookingsActivity would only help when it is already
+     * in the stack (update/cancel); after a create it isn't, and it would open above the old
+     * station/slot pickers. So: relaunch the dashboard with CLEAR_TOP (which also reloads its
+     * counters), then put My Bookings on it — Back from the list lands on the dashboard.
+     */
+    private fun openMyBookings() {
+        startActivities(
+            arrayOf(
+                Intent(this, ProsumerHomeActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP),
+                Intent(this, MyBookingsActivity::class.java)
+            )
         )
         finish()
     }
