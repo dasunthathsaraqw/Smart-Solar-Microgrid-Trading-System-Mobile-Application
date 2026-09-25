@@ -2,6 +2,10 @@ package com.example.smartmicrogrid.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.smartmicrogrid.data.local.AppDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.time.Instant
 
 /**
@@ -21,8 +25,10 @@ import java.time.Instant
  */
 class SessionManager(context: Context) {
 
+    private val appContext: Context = context.applicationContext
+
     private val prefs: SharedPreferences =
-        context.getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE)
+        appContext.getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE)
 
     /**
      * Save session after successful login.
@@ -95,9 +101,21 @@ class SessionManager(context: Context) {
     fun isLoggedIn(): Boolean = !getJwt().isNullOrEmpty() && isSessionValid()
 
     /**
-     * Clears the session (on logout or expired token).
+     * Clears the session (on logout, expired token, or a role that can't use the app).
+     *
+     * Also empties the offline cache: it holds the departing user's bookings and profile, and must
+     * never be shown to whoever signs in next on this device. Every path that ends a session goes
+     * through here, so none can forget it. The wipe runs in the background (Room forbids the main
+     * thread) and can never make logout fail; a fresh login clears the cache again as a backstop.
      */
     fun clear() {
         prefs.edit().clear().apply()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                AppDatabase.getInstance(appContext).clearCache()
+            } catch (e: Exception) {
+                // A failed cache wipe must not surface as a logout error; the next login wipes it.
+            }
+        }
     }
 }
