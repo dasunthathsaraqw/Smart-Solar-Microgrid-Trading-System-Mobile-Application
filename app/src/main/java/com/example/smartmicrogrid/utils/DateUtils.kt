@@ -61,4 +61,16 @@ object DateUtils {
             .withZone(ZoneId.systemDefault())
             .format(instant)
     }
+
+    /**
+     * Like [formatForDisplay] but time only ([Constants.DISPLAY_TIME_FORMAT]), e.g. "15:00".
+     * Used for the end of a slot window whose start already shows the date.
+     */
+    fun formatTimeForDisplay(iso: String?): String {
+        val instant = parseIso(iso) ?: return iso.orEmpty()
+        return DateTimeFormatter
+            .ofPattern(Constants.DISPLAY_TIME_FORMAT, Locale.getDefault())
+            .withZone(ZoneId.systemDefault())
+            .format(instant)
+    }
 }
