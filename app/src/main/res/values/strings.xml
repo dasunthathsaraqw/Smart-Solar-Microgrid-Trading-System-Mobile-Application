@@ -105,4 +105,52 @@
     <string name="label_action_created">Reservation created</string>
     <string name="label_action_updated">Reservation updated</string>
     <string name="label_action_cancelled">Reservation cancelled</string>
+
+    <!-- ==================== MY BOOKINGS ==================== -->
+    <string name="title_my_bookings">My Bookings</string>
+    <string name="tab_pending">Pending</string>
+    <string name="tab_approved">Approved</string>
+    <string name="tab_completed">Completed</string>
+    <string name="tab_cancelled">Cancelled</string>
+    <string name="tab_all">All</string>
+    <string name="label_no_bookings">No bookings to show</string>
+    <string name="error_loading_bookings">Couldn\'t load your bookings</string>
+
+    <!-- ==================== BOOKING DETAIL ==================== -->
+    <string name="title_booking_detail">Booking details</string>
+    <string name="action_update_slot">Update Slot</string>
+    <string name="action_cancel_booking">Cancel Booking</string>
+    <string name="action_show_qr">Show QR</string>
+    <string name="error_loading_detail">Couldn\'t load this booking</string>
+    <string name="error_updating_booking">Couldn\'t update your booking</string>
+    <string name="error_cancelling_booking">Couldn\'t cancel your booking</string>
+
+    <!-- ==================== CANCEL DIALOG ==================== -->
+    <string name="label_cancel_reason">Reason (optional)</string>
+    <string name="hint_cancel_reason">e.g. Change of plans</string>
+    <string name="action_confirm_cancel">Confirm cancellation</string>
+    <string name="action_dismiss">Keep booking</string>
+
+    <!-- ==================== UPDATE SLOT (reuses the Create Booking screens) ==================== -->
+    <string name="title_select_new_slot">Select a new slot</string>
+
+    <!-- ==================== QR DISPLAY ==================== -->
+    <string name="title_qr_code">Reservation QR code</string>
+    <string name="label_qr_valid_note">Show this code to the station operator at your slot time. It is valid only for this reservation.</string>
+    <string name="error_loading_qr">Couldn\'t load the QR code</string>
+
+    <!-- ==================== ROUND 2 ADDITIONS (not in the requested list) ==================== -->
+    <!-- Detail screen: timestamp rows and the cancellation reason the server recorded -->
+    <string name="label_created_at">Created</string>
+    <string name="label_approved_at">Approved</string>
+    <string name="label_completed_at">Completed</string>
+    <string name="label_cancelled_at">Cancelled</string>
+    <string name="label_cancellation_reason">Cancellation reason</string>
+    <!-- Cancel dialog body -->
+    <string name="msg_cancel_booking_prompt">Are you sure you want to cancel this booking? A reason is optional.</string>
+    <!-- Confirm screen in update mode -->
+    <string name="title_confirm_new_slot">Confirm new slot</string>
+    <string name="action_confirm_update">Confirm change</string>
+    <!-- Accessibility label for the QR ImageView -->
+    <string name="content_desc_qr_code">QR code for your reservation</string>
 </resources>
