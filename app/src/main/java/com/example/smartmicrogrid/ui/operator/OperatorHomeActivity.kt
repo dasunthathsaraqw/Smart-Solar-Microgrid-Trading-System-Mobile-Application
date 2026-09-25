@@ -3,7 +3,6 @@ package com.example.smartmicrogrid.ui.operator
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.smartmicrogrid.R
@@ -20,8 +19,8 @@ import com.example.smartmicrogrid.viewmodel.OperatorDashboardViewModel
  * File: OperatorHomeActivity.kt
  * Purpose: Grid operator dashboard. Shows the header, today's activity counters and a preview of
  *          the upcoming approved reservations, loaded via OperatorDashboardViewModel, and
- *          navigates to the read-only Pending Approvals and Completed History screens. Scan QR
- *          is a placeholder ("Coming soon") until its screen exists.
+ *          navigates to the read-only Pending Approvals and Completed History screens, the QR
+ *          scanner (check-in), and slot management.
  * Author: Mobile Team
  * Date: 2026
  */
@@ -67,9 +66,11 @@ class OperatorHomeActivity : AppCompatActivity() {
         binding.btnCompletedHistory.setOnClickListener {
             startActivity(Intent(this, CompletedHistoryActivity::class.java))
         }
-        // The QR scanner is built in the next round — no broken Intent, just a toast.
         binding.btnScanQr.setOnClickListener {
-            Toast.makeText(this, R.string.msg_coming_soon, Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, QrScannerActivity::class.java))
+        }
+        binding.btnManageSlots.setOnClickListener {
+            startActivity(Intent(this, SlotManagementActivity::class.java))
         }
 
         binding.btnLogout.setOnClickListener {
