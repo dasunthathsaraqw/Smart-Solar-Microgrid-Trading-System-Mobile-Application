@@ -40,6 +40,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -50,6 +51,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
+    implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.constraintlayout)
 
     // ===== Lifecycle + ViewModel =====
@@ -92,6 +94,12 @@ dependencies {
 
     // ===== Testing (already there) =====
     testImplementation(libs.junit)
+
+    // ===== Unit testing (JVM tests in app/src/test — no emulator needed) =====
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.mockk)
+    testImplementation(libs.arch.core.testing)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

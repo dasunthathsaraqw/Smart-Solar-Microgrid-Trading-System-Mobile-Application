@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    File: view_cached_banner.xml
+    Purpose: Reusable strip shown above a screen's content while it is displaying data from the
+             offline cache instead of a fresh fetch: "Showing offline data from <time>".
+             PERSISTENT, not dismissible — it describes what is on screen, and it goes away by
+             itself as soon as fresh data arrives. Theme colours only (no new colour resources),
+             so it reads correctly in light and dark mode.
+             Included with android:visibility="gone"; the Activity shows it through
+             ViewCachedBannerBinding.showIfCached(lastSyncedAt), which also sets the text.
+             The live region makes screen readers announce it when it appears.
+    Author: Mobile Team
+    Date: 2026
+-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tvCachedBanner"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:accessibilityLiveRegion="polite"
+    android:background="?attr/colorSecondaryContainer"
+    android:gravity="center"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="8dp"
+    android:textAppearance="?attr/textAppearanceBodySmall"
+    android:textColor="?attr/colorOnSecondaryContainer"
+    tools:text="Showing offline data from 25 Sep 2026, 14:00" />

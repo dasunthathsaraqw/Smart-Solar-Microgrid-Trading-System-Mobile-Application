@@ -1,0 +1,108 @@
+package com.example.smartmicrogrid.utils
+
+import android.content.Context
+import com.example.smartmicrogrid.R
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
+import java.time.temporal.ChronoUnit
+import java.util.Locale
+
+/**
+ * File: DateUtils.kt
+ * Purpose: Parse the backend's ISO-8601 UTC timestamps and format them for display.
+ * Author: Mobile Team
+ * Date: 2026
+ *
+ * Why java.time and not SimpleDateFormat(Constants.DATE_FORMAT):
+ * - The C# backend can emit "…:00Z", "…:00.123Z", or 7-digit ticks ("…:00.1234567Z"),
+ *   and sometimes no zone at all. A single fixed pattern rejects most of these.
+ * - java.time is available natively from minSdk 26 (no desugaring needed).
+ */
+object DateUtils {
+
+    // ==================== PARSING ====================
+
+    /**
+     * Parses an ISO-8601 timestamp into an [Instant].
+     *
+     * Accepts a trailing Z or an explicit offset, with any fractional-second precision.
+     * A timestamp with no zone at all is assumed to be UTC (backend stores UTC).
+     *
+     * @return the parsed instant, or null if [iso] is null, blank, or unparseable
+     */
+    fun parseIso(iso: String?): Instant? {
+        if (iso.isNullOrBlank()) return null
+        return try {
+            OffsetDateTime.parse(iso).toInstant()
+        } catch (e: DateTimeParseException) {
+            try {
+                LocalDateTime.parse(iso).toInstant(ZoneOffset.UTC)
+            } catch (e2: DateTimeParseException) {
+                null
+            }
+        }
+    }
+
+    // ==================== FORMATTING ====================
+
+    /**
+     * Formats an ISO-8601 timestamp for the UI using [Constants.DISPLAY_DATE_FORMAT]
+     * in the device's time zone.
+     *
+     * @return the formatted string; the original [iso] if it can't be parsed;
+     *         empty string if [iso] is null
+     */
+    fun formatForDisplay(iso: String?): String {
+        val instant = parseIso(iso) ?: return iso.orEmpty()
+        return DateTimeFormatter
+            .ofPattern(Constants.DISPLAY_DATE_FORMAT, Locale.getDefault())
+            .withZone(ZoneId.systemDefault())
+            .format(instant)
+    }
+
+    /**
+     * Like [formatForDisplay] but time only ([Constants.DISPLAY_TIME_FORMAT]), e.g. "15:00".
+     * Used for the end of a slot window whose start already shows the date.
+     */
+    fun formatTimeForDisplay(iso: String?): String {
+        val instant = parseIso(iso) ?: return iso.orEmpty()
+        return DateTimeFormatter
+            .ofPattern(Constants.DISPLAY_TIME_FORMAT, Locale.getDefault())
+            .withZone(ZoneId.systemDefault())
+            .format(instant)
+    }
+
+    /**
+     * A slot window for display: start date + time, then end time only,
+     * e.g. "25 Sep 2026, 14:00 – 15:00" (see R.string.label_slot_range).
+     */
+    fun formatSlotRange(context: Context, startIso: String?, endIso: String?): String =
+        context.getString(
+            R.string.label_slot_range,
+            formatForDisplay(startIso),
+            formatTimeForDisplay(endIso)
+        )
+
+    /**
+     * Formats a moment given as epoch milliseconds (like the cache's lastSyncedAt) with
+     * [Constants.DISPLAY_DATE_FORMAT] in the device's time zone, e.g. "25 Sep 2026, 14:00".
+     */
+    fun formatMillisForDisplay(epochMillis: Long): String =
+        DateTimeFormatter
+            .ofPattern(Constants.DISPLAY_DATE_FORMAT, Locale.getDefault())
+            .withZone(ZoneId.systemDefault())
+            .format(Instant.ofEpochMilli(epochMillis))
+
+    // ==================== TO THE BACKEND ====================
+
+    /**
+     * Formats [instant] as the backend's ISO-8601 UTC timestamp, e.g. "2026-09-25T08:30:00Z"
+     * (whole seconds). The inverse of [parseIso], for sending a picked date/time back.
+     */
+    fun toIsoUtc(instant: Instant): String = instant.truncatedTo(ChronoUnit.SECONDS).toString()
+}

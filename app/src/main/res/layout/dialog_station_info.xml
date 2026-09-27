@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    File: dialog_station_info.xml
+    Purpose: Content of the bottom sheet shown when a station marker is tapped — name,
+             distance, schedule, capacity, available slots, and a View Slots button. The
+             Activity puts it in a BottomSheetDialog (setContentView) and fills every value.
+    Author: Mobile Team
+    Date: 2026
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/title_station_detail"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:textColor="@color/primary"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvStationName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textAppearance="?attr/textAppearanceHeadlineSmall"
+        android:textStyle="bold"
+        tools:text="Colombo North Hub" />
+
+    <!-- ==================== DETAILS ==================== -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_distance_km"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:textColor="@color/gray" />
+
+    <TextView
+        android:id="@+id/tvDistance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        tools:text="2.3 km" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/label_schedule"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:textColor="@color/gray" />
+
+    <TextView
+        android:id="@+id/tvSchedule"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        tools:text="06:00-20:00 Mon-Sun" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/label_capacity"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:textColor="@color/gray" />
+
+    <TextView
+        android:id="@+id/tvCapacity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        tools:text="500.0 kW" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/label_available_slots"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:textColor="@color/gray" />
+
+    <TextView
+        android:id="@+id/tvAvailableSlots"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        android:textStyle="bold"
+        tools:text="12" />
+
+    <!-- ==================== ACTION ==================== -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnViewSlots"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/action_view_slots" />
+</LinearLayout>

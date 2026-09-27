@@ -1,6 +1,7 @@
 package com.example.smartmicrogrid.data.remote
 
 import android.content.Context
+import com.example.smartmicrogrid.BuildConfig
 import com.example.smartmicrogrid.utils.Constants
 import com.example.smartmicrogrid.utils.SessionManager
 import okhttp3.OkHttpClient
@@ -60,9 +61,15 @@ object RetrofitClient {
      */
     private fun buildApiService(appContext: Context): ApiService {
         // ---------- 1. Logging interceptor ----------
-        // BODY logs the full request/response JSON — great for dev, disable in production.
+        // BODY logs the full request/response JSON — debug builds only. Release logs nothing.
+        // The Authorization header is redacted even in debug so the JWT never reaches Logcat.
         val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
+            redactHeader("Authorization")
         }
 
         // ---------- 2. Auth interceptor ----------

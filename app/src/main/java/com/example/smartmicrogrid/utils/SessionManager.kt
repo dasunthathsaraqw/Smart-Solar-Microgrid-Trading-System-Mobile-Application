@@ -2,6 +2,11 @@ package com.example.smartmicrogrid.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.smartmicrogrid.data.local.AppDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.time.Instant
 
 /**
  * Manages the logged-in user's session.
@@ -20,8 +25,10 @@ import android.content.SharedPreferences
  */
 class SessionManager(context: Context) {
 
+    private val appContext: Context = context.applicationContext
+
     private val prefs: SharedPreferences =
-        context.getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE)
+        appContext.getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE)
 
     /**
      * Save session after successful login.
@@ -55,6 +62,21 @@ class SessionManager(context: Context) {
         }
     }
 
+    /**
+     * Refreshes the cached display info after the profile was loaded or edited, without touching
+     * the JWT, role, station or expiry. The dashboard and home screens read name/email from here.
+     * [nic] is only written when non-null (it can't change, but a failed profile fetch at login
+     * can leave it unset).
+     */
+    fun updateProfileInfo(name: String, email: String, nic: String? = null) {
+        prefs.edit().apply {
+            putString(Constants.KEY_NAME, name)
+            putString(Constants.KEY_EMAIL, email)
+            if (nic != null) putString(Constants.KEY_NIC, nic)
+            apply()
+        }
+    }
+
     fun getJwt(): String? = prefs.getString(Constants.KEY_JWT, null)
     fun getUserType(): String? = prefs.getString(Constants.KEY_USER_TYPE, null)
     fun getEmail(): String? = prefs.getString(Constants.KEY_EMAIL, null)
@@ -64,15 +86,36 @@ class SessionManager(context: Context) {
     fun getExpiresAt(): String? = prefs.getString(Constants.KEY_EXPIRES_AT, null)
 
     /**
-     * Returns true if a JWT is stored.
-     * Note: does NOT check expiry — do that separately when needed.
+     * Returns true if the stored expiry (LoginResponse.expiresAt) is in the future.
+     * Fails closed: a missing or unparseable expiry counts as NOT valid.
      */
-    fun isLoggedIn(): Boolean = !getJwt().isNullOrEmpty()
+    fun isSessionValid(): Boolean {
+        val expiry = DateUtils.parseIso(getExpiresAt()) ?: return false
+        return expiry.isAfter(Instant.now())
+    }
 
     /**
-     * Clears the session (on logout or expired token).
+     * Returns true if a JWT is stored AND the session has not expired.
+     * Does not clear an expired session — callers decide (e.g. LoginActivity shows login).
+     */
+    fun isLoggedIn(): Boolean = !getJwt().isNullOrEmpty() && isSessionValid()
+
+    /**
+     * Clears the session (on logout, expired token, or a role that can't use the app).
+     *
+     * Also empties the offline cache: it holds the departing user's bookings and profile, and must
+     * never be shown to whoever signs in next on this device. Every path that ends a session goes
+     * through here, so none can forget it. The wipe runs in the background (Room forbids the main
+     * thread) and can never make logout fail; a fresh login clears the cache again as a backstop.
      */
     fun clear() {
         prefs.edit().clear().apply()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                AppDatabase.getInstance(appContext).clearCache()
+            } catch (e: Exception) {
+                // A failed cache wipe must not surface as a logout error; the next login wipes it.
+            }
+        }
     }
 }

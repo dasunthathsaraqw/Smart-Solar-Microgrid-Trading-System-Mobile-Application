@@ -38,15 +38,101 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="YOUR_MAPS_API_KEY_HERE" />
 
-        <!-- Main entry point -->
+        <!-- ==================== AUTH ==================== -->
+
+        <!-- Main entry point: routes straight to the role home if a valid session exists -->
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".ui.auth.LoginActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.auth.RegisterActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- ==================== HOME (PLACEHOLDERS) ==================== -->
+
+        <activity
+            android:name=".ui.prosumer.ProsumerHomeActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.operator.OperatorHomeActivity"
+            android:exported="false" />
+
+        <!-- ==================== OPERATOR (READ-ONLY SCREENS) ==================== -->
+
+        <activity
+            android:name=".ui.operator.PendingApprovalsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.operator.CompletedHistoryActivity"
+            android:exported="false" />
+
+        <!-- ==================== OPERATOR (QR CHECK-IN + SLOT MANAGEMENT) ==================== -->
+
+        <!-- Uses the CAMERA permission declared above -->
+        <activity
+            android:name=".ui.operator.QrScannerActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.operator.SlotManagementActivity"
+            android:exported="false" />
+
+        <!-- ==================== BOOKING (CREATE FLOW) ==================== -->
+
+        <activity
+            android:name=".ui.booking.StationPickerActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.booking.SlotPickerActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.booking.ConfirmBookingActivity"
+            android:exported="false" />
+
+        <!-- Reusable: also the result screen for update/cancel -->
+        <activity
+            android:name=".ui.booking.BookingSummaryActivity"
+            android:exported="false" />
+
+        <!-- ==================== MY BOOKINGS ==================== -->
+
+        <activity
+            android:name=".ui.booking.MyBookingsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.booking.BookingDetailActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.booking.QrDisplayActivity"
+            android:exported="false" />
+
+        <!-- ==================== NEARBY STATIONS (MAP) ==================== -->
+
+        <activity
+            android:name=".ui.maps.NearbyStationsActivity"
+            android:exported="false" />
+
+        <!-- ==================== PROFILE (PROSUMER ONLY) ==================== -->
+
+        <activity
+            android:name=".ui.profile.ProfileActivity"
+            android:exported="false" />
+
+        <!-- MainActivity is intentionally NOT registered (Android Studio template leftover). -->
 
     </application>
 

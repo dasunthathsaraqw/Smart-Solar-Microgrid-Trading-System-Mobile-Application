@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    File: dialog_reservation_info.xml
+    Purpose: Content of the READ-ONLY bottom sheet an operator sees when tapping a reservation
+             in the pending queue, history or dashboard preview — who booked, when, how much,
+             and its status. No buttons: operators can't act on reservations from mobile. The
+             Activity puts it in a BottomSheetDialog and fills every value from the row it
+             already has (no request). rowCompleted is hidden unless the reservation has a
+             completion time.
+    Author: Mobile Team
+    Date: 2026
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="32dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/title_booking_detail"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:textColor="@color/primary"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvProsumerName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textAppearance="?attr/textAppearanceHeadlineSmall"
+        android:textStyle="bold"
+        tools:text="Kamal Perera" />
+
+    <!-- ==================== DETAILS ==================== -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_nic"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:textColor="@color/gray" />
+
+    <TextView
+        android:id="@+id/tvNic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        tools:text="200012345678" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/label_slot_time"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:textColor="@color/gray" />
+
+    <TextView
+        android:id="@+id/tvSlotTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        tools:text="25 Sep 2026, 14:00 – 15:00" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/label_capacity"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:textColor="@color/gray" />
+
+    <TextView
+        android:id="@+id/tvCapacity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        tools:text="5.5 kW" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/label_status"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:textColor="@color/gray" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipStatus"
+        style="@style/Widget.Material3.Chip.Assist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:clickable="false"
+        android:focusable="false"
+        app:ensureMinTouchTargetSize="false"
+        tools:text="Pending" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/label_created_at"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:textColor="@color/gray" />
+
+    <TextView
+        android:id="@+id/tvCreatedAt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        tools:text="20 Sep 2026, 10:00" />
+
+    <!-- Only when the reservation has been completed -->
+    <LinearLayout
+        android:id="@+id/rowCompleted"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_completed_at"
+            android:textAppearance="?attr/textAppearanceLabelLarge"
+            android:textColor="@color/gray" />
+
+        <TextView
+            android:id="@+id/tvCompletedAt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            tools:text="25 Sep 2026, 15:05" />
+    </LinearLayout>
+</LinearLayout>

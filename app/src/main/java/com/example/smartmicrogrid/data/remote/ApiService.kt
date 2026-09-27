@@ -80,7 +80,7 @@ interface ApiService {
     @GET("api/reports/pending-approvals")
     suspend fun getPendingApprovals(
         @Query("count") count: Int = 20
-    ): Response<List<RecentBookingDto>>
+    ): Response<List<ReservationResponse>>
 
     // ========================================================
     // RESERVATIONS — PROSUMER
@@ -198,44 +198,3 @@ interface ApiService {
         @Body request: UpdateSlotRequest
     ): Response<SlotResponse>
 }
-
-/**
- * Small helper DTO for the two endpoints that return { qrToken: "..." }:
- * - GET /api/reservations/my/{id}/qr (prosumer)
- * - GET /api/reservations/{id}/qr    (management, not used on mobile)
- */
-data class QrTokenResponse(
-    @com.google.gson.annotations.SerializedName("qrToken")
-    val qrToken: String
-)
-
-/**
- * Small helper DTO for /api/reports/pending-approvals rows.
- * Mirrors the C# RecentBooking shape used by the operator dashboard.
- */
-data class RecentBookingDto(
-    @com.google.gson.annotations.SerializedName("id")            val id: String,
-    @com.google.gson.annotations.SerializedName("prosumerNic")   val prosumerNic: String,
-    @com.google.gson.annotations.SerializedName("prosumerName")  val prosumerName: String,
-    @com.google.gson.annotations.SerializedName("stationName")   val stationName: String,
-    @com.google.gson.annotations.SerializedName("slotStartTime") val slotStartTime: String,
-    @com.google.gson.annotations.SerializedName("slotEndTime")   val slotEndTime: String,
-    @com.google.gson.annotations.SerializedName("capacityKw")    val capacityKw: Double,
-    @com.google.gson.annotations.SerializedName("status")        val status: String,
-    @com.google.gson.annotations.SerializedName("createdAt")     val createdAt: String
-)
-
-/**
- * Request body for PUT /api/slots/{id}.
- * All fields optional — send only what you're changing.
- */
-data class UpdateSlotRequest(
-    @com.google.gson.annotations.SerializedName("startTime")
-    val startTime: String? = null,
-
-    @com.google.gson.annotations.SerializedName("endTime")
-    val endTime: String? = null,
-
-    @com.google.gson.annotations.SerializedName("capacityKw")
-    val capacityKw: Double? = null
-)

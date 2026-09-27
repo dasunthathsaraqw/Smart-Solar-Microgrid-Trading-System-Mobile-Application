@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    File: dialog_edit_slot.xml
+    Purpose: Content of the "edit slot" dialog — start time, end time and capacity, pre-filled
+             from the tapped slot, with Cancel / Save. The Activity inflates it into a dialog
+             (setView) and wires the buttons itself.
+             The two time fields are READ-ONLY: tapping one opens a Material date picker and then
+             a time picker, so the operator never types a date/time (no parsing, no format or
+             time-zone mistakes). Capacity is a plain decimal field. tvError shows the server's
+             message inline (e.g. "slot is already booked") without closing the dialog;
+             progressSave shows while a save is in flight.
+    Author: Mobile Team
+    Date: 2026
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="24dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/tvDialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/title_edit_slot"
+        android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+
+    <!-- ==================== START TIME ==================== -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilStartTime"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/label_start_time">
+
+        <!-- Read-only: a tap opens the pickers (set up by the Activity) -->
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etStartTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:inputType="none"
+            tools:text="25 Sep 2026, 14:00" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- ==================== END TIME ==================== -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilEndTime"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="@string/label_end_time">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etEndTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:inputType="none"
+            tools:text="25 Sep 2026, 15:00" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- ==================== CAPACITY ==================== -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilCapacity"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="@string/label_capacity_kw">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etCapacity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            tools:text="5.5" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Server's own message, as-is. Hidden until a save is rejected. -->
+    <TextView
+        android:id="@+id/tvError"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="@color/error"
+        android:visibility="gone"
+        tools:text="Booked slots cannot be modified."
+        tools:visibility="visible" />
+
+    <!-- ==================== ACTIONS ==================== -->
+    <!-- The spinner replaces nothing: it sits left of the buttons and only shows while saving. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical|end"
+        android:orientation="horizontal">
+
+        <ProgressBar
+            android:id="@+id/progressSave"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="8dp"
+            android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancel"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/action_cancel" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSave"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/action_save_slot" />
+    </LinearLayout>
+</LinearLayout>
