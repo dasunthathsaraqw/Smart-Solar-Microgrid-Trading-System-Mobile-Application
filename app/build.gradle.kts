@@ -5,6 +5,24 @@ plugins {
 
 }
 
+// ===== API base URL =====
+// The C# Web API the app talks to, compiled into BuildConfig.API_BASE_URL (read by Constants).
+// Default: http://10.0.2.2:5151/ — the Android emulator's alias for this PC's localhost.
+// For a physical phone, override it with the PC's LAN IP without touching Kotlin:
+//   API_BASE_URL=http://192.168.1.5:5151/
+// in ~/.gradle/gradle.properties (keeps your IP out of git), this project's gradle.properties,
+// or on the command line: gradlew installDebug -PAPI_BASE_URL=http://192.168.1.5:5151/
+val apiBaseUrl: String = providers.gradleProperty("API_BASE_URL")
+    .getOrElse("http://10.0.2.2:5151/")
+    .trim()
+    // Retrofit only accepts a base URL ending in '/', so add it here rather than crash at runtime.
+    .let { if (it.endsWith("/")) it else "$it/" }
+
+// A malformed URL fails the build now instead of crashing on the first API call.
+require(apiBaseUrl.startsWith("http://") || apiBaseUrl.startsWith("https://")) {
+    "API_BASE_URL must start with http:// or https:// (got \"$apiBaseUrl\")"
+}
+
 android {
     namespace = "com.example.smartmicrogrid"
     compileSdk = 34
@@ -17,6 +35,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Set in defaultConfig so debug and release builds both get it (see apiBaseUrl above).
+        buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
     }
 
     buildTypes {

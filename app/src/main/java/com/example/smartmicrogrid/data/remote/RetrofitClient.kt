@@ -88,7 +88,7 @@ object RetrofitClient {
             .build()
 
         // ---------- 4. Retrofit instance ----------
-        // BASE_URL must end with '/' — it's already set that way in Constants.
+        // BASE_URL must end with '/' — app/build.gradle.kts guarantees it for API_BASE_URL.
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .client(okHttpClient)
