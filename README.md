@@ -137,3 +137,76 @@ The app has 16 Activities (Activity per screen, plus dialogs and bottom sheets).
 The app follows **MVVM** with a repository layer. There is no dependency-injection framework:
 repositories are created with a `Context`, and ViewModels create their own repository by default
 (constructor parameters allow tests to substitute fakes).
+
+---
+
+## 9. Getting started
+
+### Pointing the app at the API
+
+The API address is compiled into `BuildConfig.API_BASE_URL` from the Gradle property
+`API_BASE_URL` (see `app/build.gradle.kts`); `Constants.BASE_URL` reads it. You never edit Kotlin
+to change it.
+
+| Where the app runs | `API_BASE_URL` | What to do |
+|---|---|---|
+| Android emulator | `http://10.0.2.2:5151/` (the default) | Nothing. `10.0.2.2` is the emulator's alias for the PC's `localhost`. |
+| Physical phone | `http://<PC LAN IP>:5151/`, e.g. `http://192.168.1.5:5151/` | Set the property (below), sync Gradle, reinstall. |
+
+Set the property in one of these places. Each one overrides the ones below it:
+
+1. The command line: `gradlew installDebug -PAPI_BASE_URL=http://192.168.1.5:5151/`
+2. **Your user-level** `~/.gradle/gradle.properties` (on Windows,
+   `C:\Users\<you>\.gradle\gradle.properties`), as `API_BASE_URL=http://192.168.1.5:5151/`.
+   This is recommended because your IP never ends up in git.
+3. The project's `gradle.properties`, which holds a commented-out example. Don't commit your IP.
+
+The value is compiled into the APK. After changing it, run **Sync Project with Gradle Files** and
+reinstall the app. A missing trailing `/` is added for you. A value that doesn't start with
+`http://` or `https://` fails the build with a clear message, rather than crashing the app on its
+first request.
+
+**Running on a physical phone.** Check these before the demo:
+
+1. Put the phone and the PC on the same Wi-Fi network.
+2. Find the PC's LAN IP with `ipconfig`: it is the *IPv4 Address* of the Wi-Fi adapter.
+3. Make the API listen on every interface, not just `localhost`. For example, run
+   `dotnet run --urls http://0.0.0.0:5151`.
+4. Allow inbound TCP port 5151 in Windows Defender Firewall.
+5. Open `http://<PC LAN IP>:5151/api/health` in the phone's browser. If it doesn't answer there,
+   the app can't reach it either.
+
+Plain `http://` works because the manifest allows cleartext traffic
+(`android:usesCleartextTraffic="true"`). That setting is for development only.
+
+### Google Maps API key
+
+The Nearby Stations map needs a **Maps SDK for Android** key. The key lives only in
+`local.properties`, which is gitignored. `app/build.gradle.kts` reads it and injects it into the
+manifest through `manifestPlaceholders`. **Never put a real key in `AndroidManifest.xml`,
+`local.properties.example`, or anything else that is committed.**
+
+1. Copy `local.properties.example` to `local.properties` in the project root. If Android Studio
+   already created `local.properties` (with `sdk.dir`), just add the line from step 5 to it.
+2. In the [Google Cloud Console](https://console.cloud.google.com/), create or select a project.
+   Google requires a billing account on the project for Maps; check Google's current Maps pricing.
+3. Go to **APIs & Services → Library** and enable **Maps SDK for Android**.
+4. Go to **APIs & Services → Credentials → Create credentials → API key**. Restrict the key:
+   - *Application restrictions*: **Android apps**, with package name `com.example.smartmicrogrid`
+     and the SHA-1 of your debug keystore. Get the SHA-1 by running `gradlew signingReport`, or
+     with `keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android`.
+     Each teammate's debug keystore has a different SHA-1, so add every one that needs the map.
+   - *API restrictions*: **Maps SDK for Android** only.
+5. Put the key in `local.properties`:
+
+   ```properties
+   MAPS_API_KEY=AIza...your-key...
+   ```
+
+6. Sync Gradle and reinstall the app. New keys and restriction changes can take a few minutes to
+   start working.
+
+**Without a key,** the build prints a `MAPS_API_KEY is not set` warning and uses the placeholder
+`MAPS_API_KEY_NOT_SET`. The app runs and the map screen still requests nearby stations, but the
+map itself shows no tiles, and logcat reports a Maps *authorization failure*. The emulator also needs
+a system image with **Google APIs** or **Google Play**, or neither the map nor location works.

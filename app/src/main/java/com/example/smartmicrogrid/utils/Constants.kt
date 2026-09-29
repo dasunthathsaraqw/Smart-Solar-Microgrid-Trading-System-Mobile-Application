@@ -1,12 +1,16 @@
 package com.example.smartmicrogrid.utils
 
+import com.example.smartmicrogrid.BuildConfig
+
 /**
  * Global constants used across the app.
  *
  * IMPORTANT — BASE_URL:
- * - Android Emulator:   10.0.2.2 = your PC's localhost
- * - Physical Device:    use your PC's LAN IP (e.g. 192.168.1.5)
- * - Both devices must be on the same Wi-Fi network.
+ * - Comes from BuildConfig.API_BASE_URL, set by the Gradle property API_BASE_URL
+ *   (see app/build.gradle.kts and gradle.properties) — never edit it here.
+ * - Android Emulator:   default http://10.0.2.2:5151/ (10.0.2.2 = your PC's localhost)
+ * - Physical Device:    set API_BASE_URL to your PC's LAN IP (e.g. http://192.168.1.5:5151/);
+ *                       the phone and the PC must be on the same Wi-Fi network.
  *
  * Endpoint paths are NOT kept here — ApiService is the single source of truth
  * for every route (they must match the C# Web API routes exactly).
@@ -14,9 +18,8 @@ package com.example.smartmicrogrid.utils
 object Constants {
 
     // ==================== API ====================
-    // Android Emulator: 10.0.2.2 = your PC's localhost (port 5151)
-    // Physical Device: replace with your PC's LAN IP, e.g. "http://192.168.1.5:5151/"
-    const val BASE_URL = "http://10.0.2.2:5151/"
+    // Always ends with '/' (Gradle guarantees it). Not `const`: it comes from generated code.
+    val BASE_URL: String = BuildConfig.API_BASE_URL
 
     // ==================== ROLES ====================
     // These strings must EXACTLY match what the backend returns

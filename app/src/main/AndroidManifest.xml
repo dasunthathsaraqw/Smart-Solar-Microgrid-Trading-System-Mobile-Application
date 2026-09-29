@@ -33,10 +33,11 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
-        <!-- Google Maps API Key (replace with your real key later) -->
+        <!-- Google Maps API key: injected at build time from MAPS_API_KEY in local.properties
+             (gitignored) by app/build.gradle.kts. Never put a real key in this file. -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_MAPS_API_KEY_HERE" />
+            android:value="${MAPS_API_KEY}" />
 
         <!-- ==================== AUTH ==================== -->
 
