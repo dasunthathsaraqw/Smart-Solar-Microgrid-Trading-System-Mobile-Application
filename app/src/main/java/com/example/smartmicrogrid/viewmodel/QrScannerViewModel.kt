@@ -118,7 +118,8 @@ class QrScannerViewModel(application: Application) : AndroidViewModel(applicatio
      */
     fun confirmComplete() {
         val current = _state.value
-        val retryable = current is ScanState.Error && current.reservation != null
+        val retryable = current is ScanState.Error && current.reservation != null &&
+            current.code == null
         if (current !is ScanState.Verified && !retryable) return
 
         val token = heldToken ?: return

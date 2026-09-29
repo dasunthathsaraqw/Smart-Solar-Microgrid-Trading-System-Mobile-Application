@@ -1,8 +1,11 @@
 package com.example.smartmicrogrid.ui.operator
 
 import android.content.Intent
+import android.app.Activity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.smartmicrogrid.R
@@ -29,6 +32,12 @@ class OperatorHomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityOperatorHomeBinding
     private val viewModel by viewModels<OperatorDashboardViewModel>()
     private lateinit var session: SessionManager
+
+    /** A successful check-in changes dashboard counts and upcoming reservations. */
+    private val scannerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) viewModel.loadDashboard()
+        }
 
     // ==================== LIFECYCLE ====================
 
@@ -72,7 +81,7 @@ class OperatorHomeActivity : AppCompatActivity() {
             startActivity(Intent(this, CompletedHistoryActivity::class.java))
         }
         binding.btnScanQr.setOnClickListener {
-            startActivity(Intent(this, QrScannerActivity::class.java))
+            scannerLauncher.launch(Intent(this, QrScannerActivity::class.java))
         }
         binding.btnManageSlots.setOnClickListener {
             startActivity(Intent(this, SlotManagementActivity::class.java))
@@ -94,8 +103,15 @@ class OperatorHomeActivity : AppCompatActivity() {
                 OperatorDashboardState.Loading -> showLoading()
 
                 is OperatorDashboardState.Success -> {
+                    showHeader() // /auth/me may have refreshed the name, email, or station.
                     bindDashboard(state.data)
                     showContent()
+                }
+
+                OperatorDashboardState.AccessChanged -> {
+                    Toast.makeText(this, R.string.msg_operator_access_changed, Toast.LENGTH_LONG).show()
+                    session.clear()
+                    goToLogin()
                 }
 
                 is OperatorDashboardState.Error -> {
