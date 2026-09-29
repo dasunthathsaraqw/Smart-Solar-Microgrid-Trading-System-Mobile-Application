@@ -28,11 +28,16 @@ class SlotAdapter(
     class SlotViewHolder(val binding: ItemSlotBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SlotViewHolder =
+        // Inflate one item_slot card through view binding; RecyclerView reuses it as the list
+        // scrolls.
         SlotViewHolder(
             ItemSlotBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
 
     override fun onBindViewHolder(holder: SlotViewHolder, position: Int) {
+        // Show the slot window in the device's time zone and its capacity. The button text comes
+        // from the adapter (Select when booking, Edit on the operator's slot list), and the card
+        // and the button report the same slot.
         val slot = getItem(position)
         val context = holder.itemView.context
 
@@ -53,6 +58,9 @@ class SlotAdapter(
 // ==================== DIFF ====================
 
 private object SlotDiff : DiffUtil.ItemCallback<SlotResponse>() {
+    // Same slot when the server id matches, even if its times or capacity changed.
     override fun areItemsTheSame(old: SlotResponse, new: SlotResponse) = old.id == new.id
+    // Data-class equality: rebind only when something shown on the row changed, e.g. after an
+    // operator edits the slot.
     override fun areContentsTheSame(old: SlotResponse, new: SlotResponse) = old == new
 }

@@ -39,6 +39,8 @@ class SlotPickerActivity : AppCompatActivity() {
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Read the chosen station and, in update mode, the reservation being moved from the Intent;
+        // the toolbar title and the confirm step both depend on which mode this is.
         super.onCreate(savedInstanceState)
 
         // Without a station there is nothing to list — bail out rather than call the API.
@@ -73,6 +75,8 @@ class SlotPickerActivity : AppCompatActivity() {
     // ==================== OBSERVERS ====================
 
     private fun observeState() {
+        // One view per SlotListState. An empty list is a valid answer: the server has no bookable
+        // slot at this station right now.
         viewModel.state.observe(this) { state ->
             when (state) {
                 SlotListState.Loading -> showOnly(binding.progressBar)
@@ -99,11 +103,15 @@ class SlotPickerActivity : AppCompatActivity() {
 
     /** Shows exactly one of: list, spinner, empty text, error block. */
     private fun showOnly(visible: View) {
+        // Same pattern as the other list screens: exactly one of the four views is visible at a
+        // time.
         listOf(binding.rvSlots, binding.progressBar, binding.tvEmpty, binding.errorContainer)
             .forEach { it.visibility = if (it === visible) View.VISIBLE else View.GONE }
     }
 
     private fun openConfirm(slot: SlotResponse) {
+        // Step 3, the confirm screen. reservationId is null when creating and set when moving a
+        // booking, which tells that screen whether to create or update.
         startActivity(
             ConfirmBookingActivity.newIntent(this, stationId, stationName, slot, reservationId)
         )

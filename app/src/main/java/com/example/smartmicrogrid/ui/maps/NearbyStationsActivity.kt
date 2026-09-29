@@ -74,6 +74,9 @@ class NearbyStationsActivity : AppCompatActivity(), OnMapReadyCallback {
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Inflate the screen and ask the layout's map fragment for its GoogleMap (onMapReady
+        // follows asynchronously). The permission -> location -> stations flow starts only from
+        // Idle, so a rotation resumes the flow already underway instead of starting it again.
         super.onCreate(savedInstanceState)
         binding = ActivityNearbyStationsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -113,6 +116,9 @@ class NearbyStationsActivity : AppCompatActivity(), OnMapReadyCallback {
     // ==================== BUTTONS ====================
 
     private fun setupButtons() {
+        // Wire the recovery buttons on the overlays: Grant asks for location again, Retry restarts
+        // the whole flow with a fresh location, and Open Settings is the only way left once the
+        // user has refused the prompt for good.
         binding.btnGrantPermission.setOnClickListener { startFlow() }
         binding.btnRetry.setOnClickListener { startFlow() }
         binding.btnOpenSettings.setOnClickListener {
@@ -126,10 +132,14 @@ class NearbyStationsActivity : AppCompatActivity(), OnMapReadyCallback {
     // ==================== PERMISSION + LOCATION ====================
 
     private fun hasLocationPermission(): Boolean =
+        // Either precision is enough to search nearby: on Android 12+ the user may grant only
+        // approximate location.
         isGranted(Manifest.permission.ACCESS_FINE_LOCATION) ||
             isGranted(Manifest.permission.ACCESS_COARSE_LOCATION)
 
     private fun isGranted(permission: String): Boolean =
+        // Checked live each time, because the user can change the grant in Settings while this
+        // screen is in the background.
         ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 
     /**
@@ -137,11 +147,15 @@ class NearbyStationsActivity : AppCompatActivity(), OnMapReadyCallback {
      * refused "for good" — then only the Settings screen can grant it.
      */
     private fun canAskForPermission(): Boolean =
+        // After a refusal, this flag stays true only while the system is still willing to show its
+        // prompt.
         shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) ||
             shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)
 
     /** Permission check, then location, then (via the ViewModel) the stations request. */
     private fun startFlow() {
+        // Show "Getting your location..." first, then either request the location straight away or
+        // ask for permission; the launcher's callback carries on from there.
         viewModel.onLocationRequested()
         if (hasLocationPermission()) {
             fetchLocation()
@@ -162,6 +176,9 @@ class NearbyStationsActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     @SuppressLint("MissingPermission") // hasLocationPermission() is checked by every caller
     private fun fetchLocation() {
+        // Ask for a fresh, battery-friendly fix; a null result (no recent fix, common on a cold
+        // emulator) falls back to the last known location. Results go to the ViewModel captured as
+        // vm, never to this Activity, so a rotation mid-request can't lose them.
         enableMyLocationLayer()
 
         val vm = viewModel
@@ -184,6 +201,9 @@ class NearbyStationsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     @SuppressLint("MissingPermission") // only reached from fetchLocation()
     private fun fetchLastKnownLocation(vm: NearbyStationsViewModel) {
+        // Second chance after getCurrentLocation() returned nothing: the device's cached fix. If
+        // that is missing too, location is off or has never been obtained, so the screen offers
+        // Retry instead of an empty map.
         try {
             fusedClient.lastLocation
                 .addOnSuccessListener { location ->
@@ -202,6 +222,8 @@ class NearbyStationsActivity : AppCompatActivity(), OnMapReadyCallback {
     // ==================== OBSERVERS ====================
 
     private fun observeState() {
+        // Turn each NearbyState into exactly one overlay over the map, or none once stations are
+        // plotted. A 401 means the token is dead, so it ends the session instead of offering Retry.
         viewModel.state.observe(this) { state ->
             when (state) {
                 NearbyState.Idle -> showLoading(R.string.msg_getting_location)
@@ -232,11 +254,15 @@ class NearbyStationsActivity : AppCompatActivity(), OnMapReadyCallback {
     // ==================== SCREEN STATES ====================
 
     private fun showLoading(@StringRes messageRes: Int) {
+        // One loading card covers both waits; only its message changes (getting the location vs
+        // finding stations).
         binding.tvLoadingMessage.setText(messageRes)
         showOverlay(binding.cardLoading)
     }
 
     private fun showPermissionDenied(message: String) {
+        // Location was refused: explain why the map needs it and offer whichever recovery can still
+        // work (the prompt again, or the Settings screen).
         binding.tvPermissionMessage.text = message
         // Grant Permission while the system will still prompt; Open Settings once it won't.
         val canAsk = canAskForPermission()
@@ -246,12 +272,15 @@ class NearbyStationsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun showError(message: String) {
+        // A location or network failure: show the message over the map with Retry, which restarts
+        // the flow from a fresh location.
         binding.tvErrorMessage.text = message
         showOverlay(binding.errorContainer)
     }
 
     /** Shows exactly [visible] over the map; null shows only the map. */
     private fun showOverlay(visible: View?) {
+        // All four overlays are toggled together, so two can never be on screen at once.
         listOf(
             binding.cardLoading,
             binding.cardEmpty,
@@ -263,6 +292,9 @@ class NearbyStationsActivity : AppCompatActivity(), OnMapReadyCallback {
     // ==================== MAP ====================
 
     override fun onMapReady(map: GoogleMap) {
+        // The Maps SDK hands over the GoogleMap once it is ready. Marker taps open our own station
+        // sheet instead of the default info window, and stations that arrived before the map are
+        // plotted now.
         googleMap = map
         map.uiSettings.isZoomControlsEnabled = true
         map.setOnMarkerClickListener { marker ->
@@ -276,6 +308,8 @@ class NearbyStationsActivity : AppCompatActivity(), OnMapReadyCallback {
     /** Blue dot for the user, once both the map and the permission exist. */
     @SuppressLint("MissingPermission") // guarded by hasLocationPermission()
     private fun enableMyLocationLayer() {
+        // Called both when the map becomes ready and when location access is granted, because
+        // either one can happen last.
         val map = googleMap ?: return
         if (hasLocationPermission()) {
             map.isMyLocationEnabled = true
@@ -284,6 +318,8 @@ class NearbyStationsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     /** One marker per station (title = station name), then frame the camera. */
     private fun plotStations() {
+        // Needs both the map and the station list; whichever of the two arrives second does the
+        // plotting. The map is cleared first so a Retry never stacks duplicate markers.
         val map = googleMap ?: return
         val list = stations ?: return
 
@@ -304,6 +340,8 @@ class NearbyStationsActivity : AppCompatActivity(), OnMapReadyCallback {
      * zooms on that point instead of building a zero-size bounds.
      */
     private fun fitCamera(map: GoogleMap, list: List<NearbyStationResponse>) {
+        // Collect every station position plus the user's own, without duplicates, to decide how to
+        // frame the camera.
         val points = buildList {
             list.forEach { add(LatLng(it.latitude, it.longitude)) }
             viewModel.searchLocation?.let { (lat, lng) -> add(LatLng(lat, lng)) }
@@ -333,6 +371,8 @@ class NearbyStationsActivity : AppCompatActivity(), OnMapReadyCallback {
     // ==================== STATION SHEET ====================
 
     private fun showStationSheet(station: NearbyStationResponse) {
+        // Fill the bottom sheet from the tapped marker's station. "View Slots" goes straight to
+        // that station's slot picker, skipping the station-list step of Create Booking.
         val sheet = DialogStationInfoBinding.inflate(layoutInflater)
         sheet.tvStationName.text = station.stationName
         sheet.tvDistance.text = getString(R.string.value_distance_km, station.distanceKm)
