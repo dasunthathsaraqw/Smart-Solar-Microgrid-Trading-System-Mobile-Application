@@ -14,6 +14,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import com.example.smartmicrogrid.R
 import com.example.smartmicrogrid.data.remote.dto.ReservationResponse
 import com.example.smartmicrogrid.databinding.ActivityQrScannerBinding
@@ -42,16 +43,22 @@ class QrScannerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityQrScannerBinding
     private val viewModel by viewModels<QrScannerViewModel>()
+    private var scannerArmed = false
 
-    // A granted permission is picked up by onResume() (which runs when the prompt closes);
-    // this callback only has to handle a refusal.
     private val cameraPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            if (!granted) showCameraDenied()
+            if (granted) {
+                binding.permissionContainer.visibility = View.GONE
+                binding.barcodeView.resume()
+                if (viewModel.state.value is ScanState.Idle) startScanning()
+            } else {
+                showCameraDenied()
+            }
         }
 
     private val scanCallback = object : BarcodeCallback {
         override fun barcodeResult(result: BarcodeResult) {
+            scannerArmed = false
             val token = result.text
             // decodeSingle stops after one result, so an empty read has to restart it.
             if (token.isNullOrBlank()) startScanning() else viewModel.onQrScanned(token)
@@ -89,6 +96,7 @@ class QrScannerActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
+        scannerArmed = false
         binding.barcodeView.pause()
         super.onPause()
     }
@@ -129,10 +137,16 @@ class QrScannerActivity : AppCompatActivity() {
 
     /** Arms the camera for ONE code; called again for each new scan (see Idle). */
     private fun startScanning() {
-        if (hasCameraPermission()) binding.barcodeView.decodeSingle(scanCallback)
+        if (hasCameraPermission() && !scannerArmed &&
+            lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
+        ) {
+            scannerArmed = true
+            binding.barcodeView.decodeSingle(scanCallback)
+        }
     }
 
     private fun showCameraDenied() {
+        scannerArmed = false
         binding.barcodeView.pause()
         // Grant while the system will still prompt; Settings once it has been refused for good.
         val canAsk = shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
@@ -162,12 +176,15 @@ class QrScannerActivity : AppCompatActivity() {
 
                 ScanState.Completing -> showBusy(R.string.msg_completing)
 
-                is ScanState.Completed -> showResult(
-                    titleRes = R.string.label_scan_result,
-                    reservation = state.reservation,
-                    message = getString(R.string.msg_scan_complete_success),
-                    messageColor = R.color.success
-                )
+                is ScanState.Completed -> {
+                    setResult(RESULT_OK) // Operator Home refreshes when this screen closes.
+                    showResult(
+                        titleRes = R.string.label_scan_result,
+                        reservation = state.reservation,
+                        message = getString(R.string.msg_scan_complete_success),
+                        messageColor = R.color.success
+                    )
+                }
 
                 is ScanState.Error -> handleError(state)
             }
@@ -180,6 +197,16 @@ class QrScannerActivity : AppCompatActivity() {
             handleSessionExpired()
             return
         }
+        // A station assignment or role may have changed while the scanner was open.
+        if (state.code == 403) setResult(RESULT_OK)
+
+        val message = when {
+            state.code == 403 -> getString(R.string.msg_operator_access_denied, state.message)
+            state.code == 404 -> getString(R.string.msg_operator_qr_not_found, state.message)
+            state.reservation != null && state.code == null ->
+                getString(R.string.msg_operator_completion_uncertain, state.message)
+            else -> state.message
+        }
 
         val reservation = state.reservation
         if (reservation == null) {
@@ -188,7 +215,7 @@ class QrScannerActivity : AppCompatActivity() {
             showResult(
                 titleRes = R.string.error_verifying_qr,
                 reservation = null,
-                message = state.message,
+                message = message,
                 messageColor = R.color.error
             )
         } else {
@@ -197,7 +224,7 @@ class QrScannerActivity : AppCompatActivity() {
             showResult(
                 titleRes = R.string.error_completing_scan,
                 reservation = reservation,
-                message = state.message,
+                message = message,
                 messageColor = R.color.error,
                 canComplete = state.code == null
             )

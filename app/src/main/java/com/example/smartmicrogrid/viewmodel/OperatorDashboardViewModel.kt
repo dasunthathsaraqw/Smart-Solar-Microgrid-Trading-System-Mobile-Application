@@ -5,9 +5,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.smartmicrogrid.R
 import com.example.smartmicrogrid.data.remote.dto.OperatorDashboardResponse
 import com.example.smartmicrogrid.data.repository.ApiResult
+import com.example.smartmicrogrid.data.repository.AuthRepository
 import com.example.smartmicrogrid.data.repository.DashboardRepository
+import com.example.smartmicrogrid.utils.Constants
 import com.example.smartmicrogrid.utils.SessionManager
 import kotlinx.coroutines.launch
 
@@ -35,14 +38,19 @@ sealed class OperatorDashboardState {
 
     /** Load failed with a user-readable [message]; [code] is the HTTP status, null for network. */
     data class Error(val message: String, val code: Int? = null) : OperatorDashboardState()
+
+    /** /auth/me now identifies a different role; the operator session must end. */
+    object AccessChanged : OperatorDashboardState()
 }
 
 // ==================== VIEWMODEL ====================
 
-class OperatorDashboardViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repo = DashboardRepository(application.applicationContext)
-    private val session = SessionManager(application.applicationContext)
+class OperatorDashboardViewModel @JvmOverloads constructor(
+    application: Application,
+    private val authRepo: AuthRepository = AuthRepository(application.applicationContext),
+    private val repo: DashboardRepository = DashboardRepository(application.applicationContext),
+    private val session: SessionManager = SessionManager(application.applicationContext)
+) : AndroidViewModel(application) {
 
     private val _state = MutableLiveData<OperatorDashboardState>()
     val state: LiveData<OperatorDashboardState> = _state
@@ -56,12 +64,32 @@ class OperatorDashboardViewModel(application: Application) : AndroidViewModel(ap
 
     // ==================== LOAD ====================
 
-    /** Fetches the dashboard. Ignored while a request is in flight. Also used for Retry. */
+    /** Refreshes the assigned station, then fetches the dashboard. Ignored while in flight. */
     fun loadDashboard() {
         if (_state.value is OperatorDashboardState.Loading) return
 
         _state.value = OperatorDashboardState.Loading
         viewModelScope.launch {
+            when (val identity = authRepo.getMe()) {
+                is ApiResult.Success -> {
+                    val user = identity.data
+                    if (user.role != Constants.ROLE_OPERATOR) {
+                        _state.value = OperatorDashboardState.AccessChanged
+                        return@launch
+                    }
+                    session.updateOperatorIdentity(user.name, user.email, user.stationId)
+                    if (user.stationId.isNullOrBlank()) {
+                        _state.value = OperatorDashboardState.Error(
+                            getApplication<Application>().getString(R.string.msg_operator_station_missing)
+                        )
+                        return@launch
+                    }
+                }
+                is ApiResult.Error -> {
+                    _state.value = OperatorDashboardState.Error(identity.message, identity.code)
+                    return@launch
+                }
+            }
             when (val result = repo.getOperatorDashboard()) {
                 is ApiResult.Success -> _state.value = OperatorDashboardState.Success(result.data)
                 is ApiResult.Error -> _state.value =
