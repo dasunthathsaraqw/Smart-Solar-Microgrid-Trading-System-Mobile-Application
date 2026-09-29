@@ -20,6 +20,7 @@ import com.example.smartmicrogrid.utils.SessionManager
 
 /** Shows the "session expired" toast, clears the session, and restarts at LoginActivity. */
 fun Activity.handleSessionExpired() {
+    // Clear the whole task, so Back can't return to a screen that needs the expired token.
     Toast.makeText(this, R.string.msg_session_expired, Toast.LENGTH_LONG).show()
     SessionManager(applicationContext).clear()
     startActivity(

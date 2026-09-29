@@ -30,6 +30,8 @@ class RegisterActivity : AppCompatActivity() {
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Prosumer self-registration: build the form and observe the result. No session is created
+        // here; the new account stays pending until Backoffice approves it.
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -41,6 +43,8 @@ class RegisterActivity : AppCompatActivity() {
     // ==================== LISTENERS ====================
 
     private fun setupListeners() {
+        // Register from the button or the keyboard's Done key. The Login link just closes this
+        // screen, because Login is underneath it.
         binding.btnRegister.setOnClickListener { attemptRegister() }
 
         binding.etPassword.setOnEditorActionListener { _, actionId, _ ->
@@ -56,6 +60,8 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun attemptRegister() {
+        // Send only a request that passed the inline checks; otherwise the errors are already on
+        // the form.
         buildValidatedRequest()?.let { viewModel.registerProsumer(it) }
     }
 
@@ -67,6 +73,8 @@ class RegisterActivity : AppCompatActivity() {
      * and returns null if anything is invalid. Real rules are enforced by the backend.
      */
     private fun buildValidatedRequest(): RegisterProsumerRequest? {
+        // Shape checks only (filled in, a positive number, long enough). Anything that needs the
+        // database, such as a NIC or email already in use, is the server's call.
         clearErrors()
 
         val nic = binding.etNic.text?.toString().orEmpty().trim()
@@ -81,6 +89,8 @@ class RegisterActivity : AppCompatActivity() {
         var firstInvalid: View? = null
 
         fun flag(layout: TextInputLayout, message: String, field: View) {
+            // Show the error under its field and remember the first bad field, so focus jumps to
+            // the top-most problem.
             layout.error = message
             if (firstInvalid == null) firstInvalid = field
         }
@@ -129,6 +139,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun clearErrors() {
+        // Wipe the previous attempt's errors, so only problems with the current input are shown.
         listOf(
             binding.tilNic, binding.tilName, binding.tilEmail, binding.tilContact,
             binding.tilAddress, binding.tilPanelCapacity, binding.tilPassword
@@ -138,6 +149,8 @@ class RegisterActivity : AppCompatActivity() {
     // ==================== OBSERVERS ====================
 
     private fun observeRegisterState() {
+        // Success means the server created a pending account: say so and return to Login. An error
+        // shows the server's message, e.g. a NIC or email that is already registered.
         viewModel.registerState.observe(this) { state ->
             when (state) {
                 AuthState.Idle -> setLoading(false)
@@ -168,6 +181,8 @@ class RegisterActivity : AppCompatActivity() {
     // ==================== HELPERS ====================
 
     private fun setLoading(loading: Boolean) {
+        // Lock every field and both buttons while the request is in flight, so the form can't be
+        // submitted twice.
         binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
         val enabled = !loading
         listOf<View>(

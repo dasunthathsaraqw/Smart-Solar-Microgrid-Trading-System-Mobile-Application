@@ -59,6 +59,8 @@ class ProfileActivity : AppCompatActivity() {
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Load the profile and wire the three account actions. keepRestoredFields protects what the
+        // user had typed when the screen is recreated after a rotation.
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -78,6 +80,8 @@ class ProfileActivity : AppCompatActivity() {
     // ==================== LISTENERS ====================
 
     private fun setupListeners() {
+        // Save from the button or the keyboard's Done key on the last field; password change and
+        // deactivation each open a dialog first.
         binding.toolbar.setNavigationOnClickListener { finish() }
         binding.btnRetry.setOnClickListener { viewModel.loadProfile() }
 
@@ -98,6 +102,8 @@ class ProfileActivity : AppCompatActivity() {
     // ==================== OBSERVERS ====================
 
     private fun observeProfileState() {
+        // Render the profile load: the form, an error with Retry, or session expiry on a 401.
+        // Offline, the cached copy is shown with the banner.
         viewModel.profileState.observe(this) { state ->
             // Shown only for cached data; every other state (fresh, loading, error) clears it.
             binding.cachedBanner.showIfCached((state as? ProfileState.Success)?.lastSyncedAt)
@@ -133,6 +139,8 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun observeActionState() {
+        // One observer for all three account actions. Success shows a short confirmation; an error
+        // goes into the password dialog if it is open, otherwise into a toast.
         viewModel.actionState.observe(this) { state ->
             when (state) {
                 // Idle also follows a reset after Error — keep an inline error on screen.
@@ -169,6 +177,7 @@ class ProfileActivity : AppCompatActivity() {
 
     /** Inline in the password dialog when it is open (a wrong current password, a mismatch); a toast otherwise. */
     private fun showActionError(message: String) {
+        // passwordBinding is non-null only while the change-password dialog is open.
         val dialogBinding = passwordBinding
         if (dialogBinding == null) {
             Toast.makeText(this, message, Toast.LENGTH_LONG).show()
@@ -181,6 +190,8 @@ class ProfileActivity : AppCompatActivity() {
     // ==================== BINDING ====================
 
     private fun bindProfile(profile: ProsumerResponse) {
+        // baseline is what "changed" is measured against in attemptSave(); the NIC is plain text
+        // because it can't be edited.
         baseline = profile
         binding.tvNic.text = profile.nic
 
@@ -215,6 +226,8 @@ class ProfileActivity : AppCompatActivity() {
      * blank means "unchanged". Everything else is the server's to judge.
      */
     private fun attemptSave() {
+        // Sending only the changed fields means a save can't overwrite a value the user didn't
+        // touch.
         val current = baseline ?: return
         clearErrors()
 
@@ -227,6 +240,8 @@ class ProfileActivity : AppCompatActivity() {
         val required = getString(R.string.error_field_required)
         var firstInvalid: View? = null
         fun flag(message: String, field: View, layoutError: (String) -> Unit) {
+            // Show the error on its field and remember the first bad one, so focus jumps to the
+            // top-most problem.
             layoutError(message)
             if (firstInvalid == null) firstInvalid = field
         }
@@ -279,6 +294,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun clearErrors() {
+        // Remove the previous attempt's errors before validating again.
         listOf(
             binding.tilName, binding.tilEmail, binding.tilContact,
             binding.tilAddress, binding.tilPanelCapacity
@@ -288,6 +304,8 @@ class ProfileActivity : AppCompatActivity() {
     // ==================== CHANGE PASSWORD ====================
 
     private fun showPasswordDialog() {
+        // The dialog only collects the three fields: the ViewModel checks length and the
+        // confirmation match, and the server checks the current password.
         val dialogBinding = DialogChangePasswordBinding.inflate(layoutInflater)
         val dialog = MaterialAlertDialogBuilder(this)
             .setView(dialogBinding.root)
@@ -316,6 +334,8 @@ class ProfileActivity : AppCompatActivity() {
 
     /** Nothing is deactivated and no one is logged out: it only asks Backoffice to review. */
     private fun confirmDeactivation() {
+        // Confirm first, because the request goes to Backoffice straight away and the app has no
+        // way to withdraw it.
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.action_request_deactivation)
             .setMessage(R.string.msg_deactivation_confirm)
@@ -329,6 +349,8 @@ class ProfileActivity : AppCompatActivity() {
     // ==================== BUSY STATE ====================
 
     private fun setBusy(busy: Boolean) {
+        // Lock the page's buttons and, if it is open, the password dialog while an action runs, so
+        // nothing is sent twice.
         actionBusy = busy
         updateButtons()
 
@@ -347,6 +369,7 @@ class ProfileActivity : AppCompatActivity() {
 
     /** Buttons are off while an action runs; deactivation also stays off once requested. */
     private fun updateButtons() {
+        // Deactivation stays disabled once requested, because the server already has the request.
         val enabled = !actionBusy
         binding.btnSaveProfile.isEnabled = enabled
         binding.btnChangePassword.isEnabled = enabled
@@ -355,6 +378,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun refreshProgress() {
+        // One spinner serves the profile load and the actions, so it shows while either is running.
         binding.progressBar.visibility =
             if (profileLoading || actionBusy) View.VISIBLE else View.GONE
     }

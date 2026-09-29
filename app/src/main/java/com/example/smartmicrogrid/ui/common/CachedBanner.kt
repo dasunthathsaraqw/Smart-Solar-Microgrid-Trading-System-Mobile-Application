@@ -22,6 +22,8 @@ import com.example.smartmicrogrid.utils.DateUtils
  * Call it with every state, so a later fresh result clears the banner by itself.
  */
 fun ViewCachedBannerBinding.showIfCached(lastSyncedAt: Long?) {
+    // The time shown is when that data was last fetched from the server, not when the screen
+    // opened.
     if (lastSyncedAt == null) {
         root.visibility = View.GONE
         return
