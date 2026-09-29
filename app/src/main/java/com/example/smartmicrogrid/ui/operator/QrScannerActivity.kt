@@ -52,17 +52,23 @@ class QrScannerActivity : AppCompatActivity() {
 
     private val scanCallback = object : BarcodeCallback {
         override fun barcodeResult(result: BarcodeResult) {
+            // ZXing calls this with each decoded code. Its raw text is the reservation's QR token,
+            // which goes to the ViewModel for verification.
             val token = result.text
             // decodeSingle stops after one result, so an empty read has to restart it.
             if (token.isNullOrBlank()) startScanning() else viewModel.onQrScanned(token)
         }
 
+        // Not used: these are candidate points for drawing a live overlay, which this screen
+        // doesn't do.
         override fun possibleResultPoints(resultPoints: MutableList<ResultPoint>) = Unit
     }
 
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Hide ZXing's own status line (our instruction card replaces it) and ask for the camera up
+        // front; scanning starts in onResume() once permission is held.
         super.onCreate(savedInstanceState)
         binding = ActivityQrScannerBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -79,6 +85,8 @@ class QrScannerActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
+        // The camera runs only while the screen is visible: it is resumed here and paused in
+        // onPause().
         super.onResume()
         // Also the path back from the system Settings screen after granting camera access there.
         if (hasCameraPermission()) {
@@ -89,6 +97,7 @@ class QrScannerActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
+        // Release the camera whenever the screen leaves the foreground, so other apps can use it.
         binding.barcodeView.pause()
         super.onPause()
     }
@@ -96,6 +105,8 @@ class QrScannerActivity : AppCompatActivity() {
     // ==================== LISTENERS ====================
 
     private fun setupListeners() {
+        // Back goes through goBack() so it can be blocked mid-completion; Complete Charge and Scan
+        // Again drive the ViewModel's flow.
         binding.toolbar.setNavigationOnClickListener { goBack() }
         onBackPressedDispatcher.addCallback(this) { goBack() }
 
@@ -118,21 +129,28 @@ class QrScannerActivity : AppCompatActivity() {
      * succeeded on the server, so Back is ignored until the outcome is in.
      */
     private fun goBack() {
+        // Any other state is safe to leave: a verify is only a dry run.
         if (viewModel.state.value !is ScanState.Completing) finish()
     }
 
     // ==================== CAMERA ====================
 
     private fun hasCameraPermission(): Boolean =
+        // Checked live, because camera access can be granted or revoked in Settings while this
+        // screen is in the background.
         ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
             PackageManager.PERMISSION_GRANTED
 
     /** Arms the camera for ONE code; called again for each new scan (see Idle). */
     private fun startScanning() {
+        // decodeSingle() stops after one code, so a code is never read twice while it is being
+        // verified.
         if (hasCameraPermission()) binding.barcodeView.decodeSingle(scanCallback)
     }
 
     private fun showCameraDenied() {
+        // Pause the camera and explain why it is needed, offering the prompt again, or the Settings
+        // screen once the prompt has been refused for good.
         binding.barcodeView.pause()
         // Grant while the system will still prompt; Settings once it has been refused for good.
         val canAsk = shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
@@ -144,6 +162,8 @@ class QrScannerActivity : AppCompatActivity() {
     // ==================== OBSERVERS ====================
 
     private fun observeState() {
+        // Map each ScanState to one overlay over the camera. Complete Charge appears only after a
+        // successful verify, so the operator always sees who is booked before finalising.
         viewModel.state.observe(this) { state ->
             when (state) {
                 ScanState.Idle -> {
@@ -174,6 +194,8 @@ class QrScannerActivity : AppCompatActivity() {
         }
     }
 
+    // Work out which step failed: no reservation means the verify (bad or unknown code), a
+    // reservation means completing it failed.
     private fun handleError(state: ScanState.Error) {
         // 401 = token rejected/expired; retrying can't fix that.
         if (state.code == 401) {
@@ -207,6 +229,7 @@ class QrScannerActivity : AppCompatActivity() {
     // ==================== SCREEN STATES ====================
 
     private fun showBusy(@StringRes messageRes: Int) {
+        // One busy card for both calls; only its message changes (verifying vs completing).
         binding.tvBusyMessage.setText(messageRes)
         showOverlay(binding.cardBusy)
     }
@@ -225,6 +248,8 @@ class QrScannerActivity : AppCompatActivity() {
         @ColorRes messageColor: Int = R.color.error,
         canComplete: Boolean = false
     ) {
+        // One panel serves the verified preview, the success and both failures; the flags decide
+        // which parts are visible.
         binding.tvResultTitle.setText(titleRes)
 
         binding.layoutDetails.visibility = if (reservation != null) View.VISIBLE else View.GONE
@@ -245,6 +270,8 @@ class QrScannerActivity : AppCompatActivity() {
     }
 
     private fun bindDetails(reservation: ReservationResponse) {
+        // Who is booked and for what, from the server's reservation, so the operator can check the
+        // prosumer's name and NIC before completing.
         binding.tvProsumerName.text = reservation.prosumerName
         binding.tvProsumerNic.text = "${getString(R.string.label_nic)}: ${reservation.prosumerNic}"
         binding.tvStationName.text = reservation.stationName
@@ -256,6 +283,7 @@ class QrScannerActivity : AppCompatActivity() {
 
     /** Shows exactly [visible] over the camera. */
     private fun showOverlay(visible: View) {
+        // Toggled together, so two overlays can never cover the camera at once.
         listOf(binding.cardInstruction, binding.cardBusy, binding.resultPanel)
             .forEach { it.visibility = if (it === visible) View.VISIBLE else View.GONE }
     }

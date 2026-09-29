@@ -31,6 +31,8 @@ class CompletedHistoryActivity : AppCompatActivity() {
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Set up the history list and its two buttons, then load page 1 unless the ViewModel
+        // already holds pages (a rotation keeps them).
         super.onCreate(savedInstanceState)
         binding = ActivityCompletedHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -51,6 +53,8 @@ class CompletedHistoryActivity : AppCompatActivity() {
     // ==================== OBSERVERS ====================
 
     private fun observeState() {
+        // LoadingMore and Error keep the rows already loaded on screen, so a slow or failed later
+        // page never blanks the list.
         viewModel.state.observe(this) { state ->
             when (state) {
                 HistoryState.Loading -> {
@@ -74,6 +78,8 @@ class CompletedHistoryActivity : AppCompatActivity() {
         }
     }
 
+    // A failed first page has nothing to keep, so it gets the full error screen; a failed later
+    // page keeps the list and turns Load More into Retry.
     private fun handleError(state: HistoryState.Error) {
         // 401 = token rejected/expired; retrying can't fix that.
         if (state.code == 401) {
@@ -97,12 +103,14 @@ class CompletedHistoryActivity : AppCompatActivity() {
     // ==================== HELPERS ====================
 
     private fun showList(items: List<ReservationResponse>) {
+        // Hand the accumulated list to the adapter; DiffUtil animates only the newly appended rows.
         adapter.submitList(items)
         showOnly(if (items.isEmpty()) binding.tvEmpty else binding.rvHistory)
     }
 
     /** Shows exactly one of: list, spinner, empty text, error block. */
     private fun showOnly(visible: View) {
+        // Switching all four views in one place keeps them mutually exclusive.
         listOf(binding.rvHistory, binding.progressBar, binding.tvEmpty, binding.errorContainer)
             .forEach { it.visibility = if (it === visible) View.VISIBLE else View.GONE }
     }
@@ -116,6 +124,8 @@ class CompletedHistoryActivity : AppCompatActivity() {
         loading: Boolean = false,
         errorMessage: String? = null
     ) {
+        // Shown only while the server reports another page (hasNextPage), or while a later page is
+        // loading or has failed.
         binding.loadMoreBar.visibility = if (visible) View.VISIBLE else View.GONE
 
         binding.btnLoadMore.visibility = if (loading) View.INVISIBLE else View.VISIBLE
@@ -128,5 +138,6 @@ class CompletedHistoryActivity : AppCompatActivity() {
         binding.tvLoadMoreError.visibility = if (errorMessage != null) View.VISIBLE else View.GONE
     }
 
+    // Used while page 1 loads or has failed, when there is nothing to load more of.
     private fun hideLoadMoreBar() = showLoadMoreBar(visible = false)
 }

@@ -29,6 +29,8 @@ class PendingApprovalsActivity : AppCompatActivity() {
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Read-only approval queue: set up the list and Retry, then load it unless the ViewModel
+        // already holds it.
         super.onCreate(savedInstanceState)
         binding = ActivityPendingApprovalsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -48,6 +50,8 @@ class PendingApprovalsActivity : AppCompatActivity() {
     // ==================== OBSERVERS ====================
 
     private fun observeState() {
+        // One view per state. Tapping a row only opens the info sheet, because approving is done in
+        // the web app.
         viewModel.state.observe(this) { state ->
             when (state) {
                 PendingListState.Loading -> showOnly(binding.progressBar)
@@ -74,6 +78,7 @@ class PendingApprovalsActivity : AppCompatActivity() {
 
     /** Shows exactly one of: list, spinner, empty text, error block. */
     private fun showOnly(visible: View) {
+        // Switching all four views in one place keeps them mutually exclusive.
         listOf(binding.rvPending, binding.progressBar, binding.tvEmpty, binding.errorContainer)
             .forEach { it.visibility = if (it === visible) View.VISIBLE else View.GONE }
     }

@@ -33,6 +33,8 @@ fun ItemOperatorReservationBinding.bindReservation(
     showCompletedAt: Boolean,
     onClick: (ReservationResponse) -> Unit
 ) {
+    // Shared by the dashboard preview, the pending queue and the history list, so every reservation
+    // is laid out the same way. The NIC is shown because it identifies the prosumer at the station.
     val context = root.context
 
     tvProsumerName.text = reservation.prosumerName
@@ -61,6 +63,8 @@ fun ItemOperatorReservationBinding.bindReservation(
  * hand — no request — and there are no buttons: operators can't act on reservations from mobile.
  */
 fun Context.showReservationInfoSheet(reservation: ReservationResponse) {
+    // Opened from any operator list or the dashboard preview; the completion row appears only for
+    // completed reservations.
     val sheet = DialogReservationInfoBinding.inflate(LayoutInflater.from(this))
 
     sheet.tvProsumerName.text = reservation.prosumerName

@@ -33,6 +33,9 @@ class OperatorHomeActivity : AppCompatActivity() {
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Operator dashboard. Show the header from the saved session straight away, then load
+        // today's counters from GET /api/reports/operator-dashboard, which the server scopes to the
+        // operator's station.
         super.onCreate(savedInstanceState)
         session = SessionManager(applicationContext)
 
@@ -58,6 +61,8 @@ class OperatorHomeActivity : AppCompatActivity() {
     // ==================== LISTENERS ====================
 
     private fun setupListeners() {
+        // Four buttons open the operator's screens; Logout clears the session before returning to
+        // Login.
         binding.btnRetry.setOnClickListener { viewModel.loadDashboard() }
 
         binding.btnPendingApprovals.setOnClickListener {
@@ -82,6 +87,8 @@ class OperatorHomeActivity : AppCompatActivity() {
     // ==================== OBSERVERS ====================
 
     private fun observeState() {
+        // Render the dashboard load: counters and preview, an error with Retry, or session expiry
+        // on a 401. Operator data is never cached, so there is no offline banner here.
         viewModel.state.observe(this) { state ->
             when (state) {
                 OperatorDashboardState.Loading -> showLoading()
@@ -107,6 +114,8 @@ class OperatorHomeActivity : AppCompatActivity() {
     // ==================== BINDING ====================
 
     private fun showHeader() {
+        // Name, email and station id come from the login response saved in the session; an operator
+        // with no station assigned sees it as not available.
         val notAvailable = getString(R.string.value_not_available)
         val email = viewModel.userEmail.ifEmpty { notAvailable }
         val stationId = viewModel.stationId ?: notAvailable
@@ -117,6 +126,7 @@ class OperatorHomeActivity : AppCompatActivity() {
     }
 
     private fun bindDashboard(data: OperatorDashboardResponse) {
+        // Today's counts exactly as the server computed them, then the upcoming-approved preview.
         binding.tvPendingTodayCount.text = data.pendingToday.toString()
         binding.tvApprovedTodayCount.text = data.approvedToday.toString()
         binding.tvCompletedTodayCount.text = data.completedToday.toString()
@@ -127,6 +137,8 @@ class OperatorHomeActivity : AppCompatActivity() {
 
     /** The first few upcoming approved reservations as rows, or the empty text. */
     private fun bindUpcoming(data: OperatorDashboardResponse) {
+        // Rows are added straight into a LinearLayout rather than a RecyclerView, because at most
+        // five are shown.
         val container = binding.upcomingContainer
         container.removeAllViews() // rebuilt from scratch, so a replayed state can't duplicate rows
 
@@ -143,18 +155,22 @@ class OperatorHomeActivity : AppCompatActivity() {
     // ==================== SCREEN STATES ====================
 
     private fun showLoading() {
+        // Spinner only; content and error stay hidden until the request finishes.
         binding.progressBar.visibility = View.VISIBLE
         binding.contentScroll.visibility = View.GONE
         binding.errorContainer.visibility = View.GONE
     }
 
     private fun showContent() {
+        // Dashboard loaded: hide the spinner and any earlier error.
         binding.progressBar.visibility = View.GONE
         binding.contentScroll.visibility = View.VISIBLE
         binding.errorContainer.visibility = View.GONE
     }
 
     private fun showError() {
+        // Replace the whole content area (counters, preview and navigation buttons) with the error
+        // message and Retry.
         binding.progressBar.visibility = View.GONE
         binding.contentScroll.visibility = View.GONE
         binding.errorContainer.visibility = View.VISIBLE
@@ -163,6 +179,7 @@ class OperatorHomeActivity : AppCompatActivity() {
     // ==================== NAVIGATION ====================
 
     private fun goToLogin() {
+        // Clear the task, so Back from Login can't return to a screen whose session has ended.
         startActivity(
             Intent(this, LoginActivity::class.java)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
