@@ -42,6 +42,8 @@ class MyBookingsActivity : AppCompatActivity() {
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Set up the list and the status tabs, then load the remembered tab (Pending on first open)
+        // unless the ViewModel already holds its list.
         super.onCreate(savedInstanceState)
         binding = ActivityMyBookingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -69,9 +71,12 @@ class MyBookingsActivity : AppCompatActivity() {
 
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
+                // Load the newly selected tab; the ViewModel cancels any request still running for
+                // the previous one.
                 viewModel.loadBookings(tabStatuses[tab.position])
             }
 
+            // Nothing to do here: the onTabSelected() that follows loads the new list.
             override fun onTabUnselected(tab: TabLayout.Tab) = Unit
 
             // Tapping the current tab again refreshes it.
@@ -84,6 +89,8 @@ class MyBookingsActivity : AppCompatActivity() {
     // ==================== OBSERVERS ====================
 
     private fun observeState() {
+        // Show the selected tab's list, its empty text, or an error with Retry. The offline banner
+        // appears only when the list came from the Room cache.
         viewModel.state.observe(this) { state ->
             // Shown only for cached data; every other state (fresh, loading, error) clears it.
             binding.cachedBanner.showIfCached((state as? BookingListState.Success)?.lastSyncedAt)
@@ -113,6 +120,8 @@ class MyBookingsActivity : AppCompatActivity() {
 
     /** Shows exactly one of: list, spinner, empty text, error block. */
     private fun showOnly(visible: View) {
+        // Keep the list, spinner, empty text and error mutually exclusive by switching them in one
+        // place.
         listOf(binding.rvBookings, binding.progressBar, binding.tvEmpty, binding.errorContainer)
             .forEach { it.visibility = if (it === visible) View.VISIBLE else View.GONE }
     }

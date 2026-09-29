@@ -44,6 +44,8 @@ class ConfirmBookingActivity : AppCompatActivity() {
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Recap the chosen station and slot from the Intent. A reservation id switches the screen
+        // to update mode, which changes the title, the button text and the call made on Confirm.
         super.onCreate(savedInstanceState)
 
         // Without both ids there is nothing to book — bail out rather than call the API.
@@ -73,6 +75,7 @@ class ConfirmBookingActivity : AppCompatActivity() {
     // ==================== LISTENERS ====================
 
     private fun setupListeners() {
+        // Back and Cancel just close the screen; nothing has been sent until Confirm is tapped.
         binding.toolbar.setNavigationOnClickListener { finish() }
         binding.btnCancel.setOnClickListener { finish() }
         binding.btnConfirm.setOnClickListener { submit() }
@@ -82,6 +85,8 @@ class ConfirmBookingActivity : AppCompatActivity() {
 
     /** Create or move, depending on the mode. Both ViewModels ignore a double-tap. */
     private fun submit() {
+        // The server enforces every booking rule (7-day window, 12-hour notice, slot still free),
+        // so nothing is checked here before sending.
         val id = reservationId
         if (id != null) {
             updateViewModel.updateSlot(id, slotId)
@@ -91,15 +96,21 @@ class ConfirmBookingActivity : AppCompatActivity() {
     }
 
     private fun resetAction() {
+        // Clear the handled result on whichever ViewModel this mode uses, so a rotation doesn't
+        // replay it.
         if (reservationId != null) updateViewModel.resetActionState() else createViewModel.resetState()
     }
 
     private fun actionState(): LiveData<BookingActionState> =
+        // Both ViewModels report through the same BookingActionState type, so one observer serves
+        // both modes.
         if (reservationId != null) updateViewModel.actionState else createViewModel.state
 
     // ==================== OBSERVERS ====================
 
     private fun observeState() {
+        // Success opens the shared summary and closes this screen. A rejection (slot taken, rule
+        // broken) stays inline under the recap, in the server's own words.
         actionState().observe(this) { state ->
             when (state) {
                 // Idle also follows a reset after Error — keep the inline error on screen.
@@ -137,6 +148,8 @@ class ConfirmBookingActivity : AppCompatActivity() {
     // ==================== HELPERS ====================
 
     private fun showSelection() {
+        // The recap is built from the Intent extras passed by the slot picker, so it needs no
+        // request.
         binding.tvStationName.text = intent.getStringExtra(EXTRA_STATION_NAME).orEmpty()
         binding.tvSlotTime.text = DateUtils.formatSlotRange(
             this,
@@ -148,6 +161,8 @@ class ConfirmBookingActivity : AppCompatActivity() {
     }
 
     private fun setLoading(loading: Boolean) {
+        // Disable both buttons while the request is in flight, so Confirm can't be sent twice and
+        // Cancel can't abandon a request halfway.
         binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
         binding.btnConfirm.isEnabled = !loading
         binding.btnCancel.isEnabled = !loading
