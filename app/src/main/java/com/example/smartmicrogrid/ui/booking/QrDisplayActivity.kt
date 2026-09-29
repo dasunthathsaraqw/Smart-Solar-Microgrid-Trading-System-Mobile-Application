@@ -37,6 +37,8 @@ class QrDisplayActivity : AppCompatActivity() {
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Show the station and slot passed in straight away, then fetch the QR token; only the
+        // token needs the server.
         super.onCreate(savedInstanceState)
 
         // Without an id there is nothing to show — bail out rather than call the API.
@@ -65,6 +67,8 @@ class QrDisplayActivity : AppCompatActivity() {
     // ==================== OBSERVERS ====================
 
     private fun observeState() {
+        // A token becomes a QR image. An error is usually the server refusing because the
+        // reservation isn't Approved, and its message is shown as-is.
         viewModel.state.observe(this) { state ->
             when (state) {
                 QrState.Loading -> showOnly(binding.progressBar)
@@ -88,6 +92,8 @@ class QrDisplayActivity : AppCompatActivity() {
 
     /** Encodes [token] off the main thread, then shows it; an encoding failure shows the error. */
     private fun renderQr(token: String) {
+        // Encoding an 800 px bitmap is CPU work, so it runs on Dispatchers.Default, and
+        // lifecycleScope drops it if the screen closes first.
         showOnly(binding.progressBar)
         lifecycleScope.launch {
             val bitmap = withContext(Dispatchers.Default) { encodeQr(token) }
@@ -105,6 +111,8 @@ class QrDisplayActivity : AppCompatActivity() {
      * tile so it stays sharp when the ImageView scales it. Returns null if encoding fails.
      */
     private fun encodeQr(token: String): Bitmap? = try {
+        // Encode the token exactly as the server issued it; the operator's scanner reads the same
+        // string back and sends it for verification.
         BarcodeEncoder().encodeBitmap(token, BarcodeFormat.QR_CODE, QR_SIZE_PX, QR_SIZE_PX)
     } catch (e: Exception) {
         null
@@ -114,6 +122,8 @@ class QrDisplayActivity : AppCompatActivity() {
 
     /** Station and slot time come from the detail screen; the QR endpoint returns only a token. */
     private fun showReservationInfo() {
+        // Display only: shown while the token loads, so the user can see which booking the code is
+        // for.
         binding.tvStationName.text = intent.getStringExtra(EXTRA_STATION_NAME).orEmpty()
         binding.tvSlotTime.text = DateUtils.formatSlotRange(
             this,
@@ -123,12 +133,14 @@ class QrDisplayActivity : AppCompatActivity() {
     }
 
     private fun showError(message: String) {
+        // Explain why no code could be shown, with Retry to ask the server again.
         binding.tvErrorMessage.text = message
         showOnly(binding.errorContainer)
     }
 
     /** Shows exactly one of: content, spinner, error block. */
     private fun showOnly(visible: View) {
+        // One switch for all three views, so the QR, the spinner and the error can never overlap.
         listOf(binding.contentScroll, binding.progressBar, binding.errorContainer)
             .forEach { it.visibility = if (it === visible) View.VISIBLE else View.GONE }
     }

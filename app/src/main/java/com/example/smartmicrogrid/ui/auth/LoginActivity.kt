@@ -32,6 +32,8 @@ class LoginActivity : AppCompatActivity() {
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Launcher screen. A still-valid saved session skips the form and opens the right home;
+        // otherwise the login form is shown.
         super.onCreate(savedInstanceState)
         session = SessionManager(applicationContext)
 
@@ -53,6 +55,8 @@ class LoginActivity : AppCompatActivity() {
     // ==================== LISTENERS ====================
 
     private fun setupListeners() {
+        // Log in from the button or the keyboard's Done key; the Register link opens self-
+        // registration.
         binding.btnLogin.setOnClickListener { attemptLogin() }
 
         binding.etPassword.setOnEditorActionListener { _, actionId, _ ->
@@ -70,6 +74,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun attemptLogin() {
+        // Pass the raw input on; AuthViewModel trims it and does the basic shape checks before
+        // calling the API.
         viewModel.login(
             email = binding.etEmail.text?.toString().orEmpty(),
             password = binding.etPassword.text?.toString().orEmpty()
@@ -79,6 +85,8 @@ class LoginActivity : AppCompatActivity() {
     // ==================== OBSERVERS ====================
 
     private fun observeLoginState() {
+        // Loading locks the form, success routes by the role the server returned, and an error
+        // shows the server's own message (wrong password, account pending approval, ...).
         viewModel.loginState.observe(this) { state ->
             when (state) {
                 AuthState.Idle -> setLoading(false)
@@ -111,6 +119,8 @@ class LoginActivity : AppCompatActivity() {
     // ==================== HELPERS ====================
 
     private fun setLoading(loading: Boolean) {
+        // Lock every input while the request is in flight, so the form can't be edited or submitted
+        // twice.
         binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
         val enabled = !loading
         binding.tilEmail.isEnabled = enabled
@@ -126,6 +136,8 @@ class LoginActivity : AppCompatActivity() {
      *         has no mobile home — in that case a toast is shown and the session is cleared.
      */
     private fun routeByRole(role: String?): Boolean {
+        // The role comes from the server's login response (or the saved session); only Prosumer and
+        // GridOperator have a home screen on mobile.
         return when (role) {
             Constants.ROLE_PROSUMER -> {
                 startActivity(Intent(this, ProsumerHomeActivity::class.java))

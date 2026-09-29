@@ -51,6 +51,8 @@ class SlotManagementActivity : AppCompatActivity() {
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Slots of the operator's own station (the ViewModel reads the station from the session):
+        // set up the list and Retry, then load it.
         super.onCreate(savedInstanceState)
         binding = ActivitySlotManagementBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -71,6 +73,8 @@ class SlotManagementActivity : AppCompatActivity() {
     // ==================== OBSERVERS ====================
 
     private fun observeListState() {
+        // One view per list state. After a successful edit the ViewModel swaps the saved slot into
+        // the list, so no reload is needed.
         viewModel.listState.observe(this) { state ->
             when (state) {
                 SlotListState.Loading -> showOnly(binding.progressBar)
@@ -95,6 +99,8 @@ class SlotManagementActivity : AppCompatActivity() {
     }
 
     private fun observeUpdateState() {
+        // Saving from the edit dialog: success closes it with a short confirmation; a refusal stays
+        // inline so the operator can correct the values.
         viewModel.updateState.observe(this) { state ->
             when (state) {
                 // Idle also follows a reset after Error — keep the inline error on screen.
@@ -126,6 +132,7 @@ class SlotManagementActivity : AppCompatActivity() {
 
     /** The server's own message, inline in the open dialog (which stays open for correction). */
     private fun showSaveError(message: String) {
+        // editBinding is non-null only while the edit dialog is open.
         val dialogBinding = editBinding
         if (dialogBinding == null) {
             // The dialog is gone (e.g. after a rotation) — fall back to a toast.
@@ -139,6 +146,8 @@ class SlotManagementActivity : AppCompatActivity() {
     // ==================== EDIT DIALOG ====================
 
     private fun showEditDialog(slot: SlotResponse) {
+        // Edit one slot's start, end and capacity. Saving sends only what changed; whether the
+        // change is allowed (e.g. on a booked slot) is the server's decision.
         val dialogBinding = DialogEditSlotBinding.inflate(layoutInflater)
 
         // The values being edited. Times are kept as the backend's ISO strings; an untouched
@@ -199,6 +208,8 @@ class SlotManagementActivity : AppCompatActivity() {
 
     /** The capacity as a number > 0, or null after showing the inline error. */
     private fun validCapacity(dialogBinding: DialogEditSlotBinding): Double? {
+        // A shape check only: a number above zero. Any real limit on capacity is enforced by the
+        // server.
         dialogBinding.tilCapacity.error = null
 
         val text = dialogBinding.etCapacity.text?.toString().orEmpty().trim()
@@ -216,6 +227,8 @@ class SlotManagementActivity : AppCompatActivity() {
 
     /** Disables the dialog's inputs and shows its spinner while a save is in flight. */
     private fun setSaving(saving: Boolean) {
+        // Also makes the dialog non-cancellable while saving, so it can't be dismissed with the
+        // result still pending.
         val dialogBinding = editBinding ?: return
         val enabled = !saving
 
@@ -237,6 +250,8 @@ class SlotManagementActivity : AppCompatActivity() {
      * done here so no one ever types or reads a time zone.
      */
     private fun pickDateTime(currentIso: String, onPicked: (String) -> Unit) {
+        // Material's date picker works in UTC days and the time picker in local hours and minutes,
+        // so the two are combined in the device's time zone before converting to UTC.
         val zone = ZoneId.systemDefault()
         val current = DateUtils.parseIso(currentIso)?.atZone(zone) ?: ZonedDateTime.now(zone)
 
@@ -271,6 +286,7 @@ class SlotManagementActivity : AppCompatActivity() {
 
     /** Shows exactly one of: list, spinner, empty text, error block. */
     private fun showOnly(visible: View) {
+        // Switching all four views in one place keeps them mutually exclusive.
         listOf(binding.rvSlots, binding.progressBar, binding.tvEmpty, binding.errorContainer)
             .forEach { it.visibility = if (it === visible) View.VISIBLE else View.GONE }
     }

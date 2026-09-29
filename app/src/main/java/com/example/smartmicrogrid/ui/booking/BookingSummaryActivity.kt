@@ -31,6 +31,8 @@ class BookingSummaryActivity : AppCompatActivity() {
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Show the result of a create, update or cancel. Back is redirected to Done, because the
+        // step that produced this result has already finished.
         super.onCreate(savedInstanceState)
 
         // Nothing to summarise (missing or unreadable extra) — bail out.
@@ -54,6 +56,9 @@ class BookingSummaryActivity : AppCompatActivity() {
     // ==================== BINDING ====================
 
     private fun bindResponse(response: ReservationActionResponse) {
+        // Everything shown comes from the server's action response: its message, the reservation as
+        // saved, the hours until the slot and whether it can still be modified. Nothing is computed
+        // here.
         val reservation = response.reservation
 
         binding.tvActionTitle.text = actionTitle(response.action)
@@ -81,6 +86,7 @@ class BookingSummaryActivity : AppCompatActivity() {
 
     /** Headline for the action taken; an action we don't recognise is shown as the raw text. */
     private fun actionTitle(action: String): String = when {
+        // Case-insensitive, so the headline doesn't depend on the exact casing the server uses.
         action.equals(Constants.ACTION_CREATED, ignoreCase = true) ->
             getString(R.string.label_action_created)
         action.equals(Constants.ACTION_UPDATED, ignoreCase = true) ->
@@ -98,6 +104,8 @@ class BookingSummaryActivity : AppCompatActivity() {
      * counters reflect the action that was just taken.
      */
     private fun goToDashboard() {
+        // Leave the finished flow; the relaunched dashboard reloads its counters, so they include
+        // this action.
         startActivity(
             Intent(this, ProsumerHomeActivity::class.java)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -113,6 +121,8 @@ class BookingSummaryActivity : AppCompatActivity() {
      * counters), then put My Bookings on it — Back from the list lands on the dashboard.
      */
     private fun openMyBookings() {
+        // Two Intents in one call build the back stack dashboard -> My Bookings, dropping the
+        // booking-flow screens underneath.
         startActivities(
             arrayOf(
                 Intent(this, ProsumerHomeActivity::class.java)
@@ -127,6 +137,8 @@ class BookingSummaryActivity : AppCompatActivity() {
 
     /** Reads the response passed by [newIntent]; null if absent or not valid JSON. */
     private fun readResponse(): ReservationActionResponse? {
+        // The response travels as JSON (see newIntent); an unreadable extra returns null and the
+        // screen closes instead of crashing.
         val json = intent.getStringExtra(EXTRA_RESPONSE_JSON) ?: return null
         return try {
             Gson().fromJson(json, ReservationActionResponse::class.java)
@@ -144,6 +156,8 @@ class BookingSummaryActivity : AppCompatActivity() {
          * DTO changes needed, and the nested ReservationResponse comes along for free.
          */
         fun newIntent(context: Context, response: ReservationActionResponse): Intent =
+            // Serialise the whole action response, reservation included, so the summary needs no
+            // request of its own.
             Intent(context, BookingSummaryActivity::class.java)
                 .putExtra(EXTRA_RESPONSE_JSON, Gson().toJson(response))
     }

@@ -27,6 +27,8 @@ class StationPickerActivity : AppCompatActivity() {
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Booking step 1: set up the toolbar, the station list and Retry, then load the stations
+        // from GET /api/stations.
         super.onCreate(savedInstanceState)
         binding = ActivityStationPickerBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -46,6 +48,8 @@ class StationPickerActivity : AppCompatActivity() {
     // ==================== OBSERVERS ====================
 
     private fun observeState() {
+        // Show one view per StationListState; the offline banner appears only when the list came
+        // from the Room cache instead of the server.
         viewModel.state.observe(this) { state ->
             // Shown only for cached data; every other state (fresh, loading, error) clears it.
             binding.cachedBanner.showIfCached((state as? StationListState.Success)?.lastSyncedAt)
@@ -75,11 +79,15 @@ class StationPickerActivity : AppCompatActivity() {
 
     /** Shows exactly one of: list, spinner, empty text, error block. */
     private fun showOnly(visible: View) {
+        // Switching all four views in one place keeps them mutually exclusive, whatever state came
+        // before.
         listOf(binding.rvStations, binding.progressBar, binding.tvEmpty, binding.errorContainer)
             .forEach { it.visibility = if (it === visible) View.VISIBLE else View.GONE }
     }
 
     private fun openSlotPicker(station: StationResponse) {
+        // Booking step 2. The station name travels with the id so the slot picker can show it as
+        // its subtitle without another request.
         startActivity(SlotPickerActivity.newIntent(this, station.id, station.stationName))
     }
 }

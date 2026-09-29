@@ -50,6 +50,9 @@ class BookingDetailActivity : AppCompatActivity() {
     // ==================== LIFECYCLE ====================
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Load the reservation named in the Intent and wire its actions. The detail and the
+        // update/cancel results are observed separately, because an action runs while the detail is
+        // already on screen.
         super.onCreate(savedInstanceState)
 
         // Without an id there is nothing to show — bail out rather than call the API.
@@ -76,6 +79,8 @@ class BookingDetailActivity : AppCompatActivity() {
     // ==================== LISTENERS ====================
 
     private fun setupListeners() {
+        // Wire the toolbar, Retry and the three action buttons. Update Slot and Show QR open other
+        // screens using the reservation already loaded; Cancel asks for a reason first.
         binding.toolbar.setNavigationOnClickListener { finish() }
         binding.btnRetry.setOnClickListener { viewModel.loadDetail(reservationId) }
 
@@ -102,6 +107,8 @@ class BookingDetailActivity : AppCompatActivity() {
     }
 
     private fun showCancelDialog() {
+        // Collect an optional cancellation reason before cancelling. Whether a cancel is still
+        // allowed (e.g. the 12-hour notice) is decided by the server, not by this dialog.
         val dialogBinding = DialogCancelReasonBinding.inflate(layoutInflater)
         val dialog = MaterialAlertDialogBuilder(this)
             .setView(dialogBinding.root)
@@ -119,6 +126,8 @@ class BookingDetailActivity : AppCompatActivity() {
     // ==================== OBSERVERS ====================
 
     private fun observeDetailState() {
+        // Render the reservation load: spinner, the details with the buttons its status allows, or
+        // an error with Retry. A 401 ends the session instead.
         viewModel.state.observe(this) { state ->
             // Shown only for cached data; every other state (fresh, loading, error) clears it.
             binding.cachedBanner.showIfCached((state as? BookingDetailState.Success)?.lastSyncedAt)
@@ -157,6 +166,9 @@ class BookingDetailActivity : AppCompatActivity() {
     }
 
     private fun observeActionState() {
+        // Handle the result of Update or Cancel. Success opens the shared summary screen and closes
+        // this one; a refusal is the server's own message (such as the 12-hour notice rule), shown
+        // as-is.
         viewModel.actionState.observe(this) { state ->
             when (state) {
                 // Idle also follows a reset after Error — nothing to show or hide beyond this.
@@ -190,6 +202,8 @@ class BookingDetailActivity : AppCompatActivity() {
     // ==================== BINDING ====================
 
     private fun bindReservation(r: ReservationResponse) {
+        // Fill every field from the server's copy, including the timeline rows (created, approved,
+        // completed, cancelled) that only appear once the server has a time for them.
         binding.tvStationName.text = r.stationName
         binding.tvSlotTime.text = DateUtils.formatSlotRange(this, r.slotStartTime, r.slotEndTime)
         binding.tvCapacity.text = getString(R.string.value_capacity_kw, r.capacityKw)
@@ -210,6 +224,8 @@ class BookingDetailActivity : AppCompatActivity() {
     }
 
     private fun bindTimestamp(row: View, value: TextView, iso: String?) {
+        // A timeline row is hidden when the server sent no time for that step, rather than shown
+        // empty.
         row.visibility = if (iso.isNullOrBlank()) View.GONE else View.VISIBLE
         value.text = DateUtils.formatForDisplay(iso)
     }
@@ -226,6 +242,8 @@ class BookingDetailActivity : AppCompatActivity() {
      * Status text is case-sensitive, so a differently-cased value also shows none.
      */
     private fun updateActions(status: String) {
+        // Only button visibility is decided here; the server still validates every action when it
+        // is sent.
         val pending = status == Constants.STATUS_PENDING
         val approved = status == Constants.STATUS_APPROVED
 
@@ -235,12 +253,16 @@ class BookingDetailActivity : AppCompatActivity() {
     }
 
     private fun hideActions() {
+        // No buttons while loading or after an error, so nothing can act on a reservation that
+        // isn't on screen.
         binding.btnUpdateSlot.visibility = View.GONE
         binding.btnCancelBooking.visibility = View.GONE
         binding.btnShowQr.visibility = View.GONE
     }
 
     private fun setActionLoading(loading: Boolean) {
+        // Disable all three buttons while an update or cancel is in flight, so a second tap can't
+        // send another request.
         actionLoading = loading
         val enabled = !loading
         binding.btnUpdateSlot.isEnabled = enabled
@@ -250,6 +272,8 @@ class BookingDetailActivity : AppCompatActivity() {
     }
 
     private fun refreshProgress() {
+        // The single spinner is shared by the detail load and the actions, so it stays visible
+        // while either one is still running.
         binding.progressBar.visibility =
             if (detailLoading || actionLoading) View.VISIBLE else View.GONE
     }
@@ -260,6 +284,8 @@ class BookingDetailActivity : AppCompatActivity() {
         private const val EXTRA_RESERVATION_ID = "extra_reservation_id"
 
         fun newIntent(context: Context, reservationId: String): Intent =
+            // Only the id travels; this screen always loads the current copy from the server (or
+            // from the cache when offline).
             Intent(context, BookingDetailActivity::class.java)
                 .putExtra(EXTRA_RESERVATION_ID, reservationId)
     }

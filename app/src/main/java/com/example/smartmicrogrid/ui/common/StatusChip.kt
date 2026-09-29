@@ -19,6 +19,7 @@ import com.google.android.material.chip.Chip
 
 /** Shows [status] on this chip, colored per status. Unknown statuses fall back to gray. */
 fun Chip.applyReservationStatus(status: String) {
+    // The text is the backend's status string as-is; only its color is chosen here.
     val color = ContextCompat.getColor(context, reservationStatusColor(status))
     text = status
     setTextColor(color)
@@ -27,6 +28,7 @@ fun Chip.applyReservationStatus(status: String) {
 
 @ColorRes
 private fun reservationStatusColor(status: String): Int = when (status) {
+    // Case-sensitive match on the backend's status strings; anything else falls back to gray.
     Constants.STATUS_PENDING -> R.color.status_pending
     Constants.STATUS_APPROVED -> R.color.status_approved
     Constants.STATUS_COMPLETED -> R.color.status_completed

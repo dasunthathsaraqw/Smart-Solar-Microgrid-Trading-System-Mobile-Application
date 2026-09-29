@@ -24,11 +24,15 @@ class BookingAdapter(
     class BookingViewHolder(val binding: ItemBookingBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookingViewHolder =
+        // Inflate one item_booking card through view binding; RecyclerView reuses it as the list
+        // scrolls.
         BookingViewHolder(
             ItemBookingBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
 
     override fun onBindViewHolder(holder: BookingViewHolder, position: Int) {
+        // Show the station, the slot window in the device's time zone and the status chip. Tapping
+        // the card hands the reservation to the Activity, which opens its detail screen.
         val booking = getItem(position)
         val context = holder.itemView.context
 
@@ -46,8 +50,12 @@ class BookingAdapter(
 
 private object BookingDiff : DiffUtil.ItemCallback<ReservationResponse>() {
     override fun areItemsTheSame(old: ReservationResponse, new: ReservationResponse) =
+        // Same booking when the server id matches, even if its status has changed since the last
+        // load.
         old.id == new.id
 
     override fun areContentsTheSame(old: ReservationResponse, new: ReservationResponse) =
+        // Data-class equality: a reservation whose status moved (e.g. Pending to Approved) is
+        // rebound, so its chip updates.
         old == new
 }
