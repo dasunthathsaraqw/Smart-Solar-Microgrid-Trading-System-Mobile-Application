@@ -178,3 +178,35 @@ first request.
 
 Plain `http://` works because the manifest allows cleartext traffic
 (`android:usesCleartextTraffic="true"`). That setting is for development only.
+
+### Google Maps API key
+
+The Nearby Stations map needs a **Maps SDK for Android** key. The key lives only in
+`local.properties`, which is gitignored. `app/build.gradle.kts` reads it and injects it into the
+manifest through `manifestPlaceholders`. **Never put a real key in `AndroidManifest.xml`,
+`local.properties.example`, or anything else that is committed.**
+
+1. Copy `local.properties.example` to `local.properties` in the project root. If Android Studio
+   already created `local.properties` (with `sdk.dir`), just add the line from step 5 to it.
+2. In the [Google Cloud Console](https://console.cloud.google.com/), create or select a project.
+   Google requires a billing account on the project for Maps; check Google's current Maps pricing.
+3. Go to **APIs & Services → Library** and enable **Maps SDK for Android**.
+4. Go to **APIs & Services → Credentials → Create credentials → API key**. Restrict the key:
+   - *Application restrictions*: **Android apps**, with package name `com.example.smartmicrogrid`
+     and the SHA-1 of your debug keystore. Get the SHA-1 by running `gradlew signingReport`, or
+     with `keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android`.
+     Each teammate's debug keystore has a different SHA-1, so add every one that needs the map.
+   - *API restrictions*: **Maps SDK for Android** only.
+5. Put the key in `local.properties`:
+
+   ```properties
+   MAPS_API_KEY=AIza...your-key...
+   ```
+
+6. Sync Gradle and reinstall the app. New keys and restriction changes can take a few minutes to
+   start working.
+
+**Without a key,** the build prints a `MAPS_API_KEY is not set` warning and uses the placeholder
+`MAPS_API_KEY_NOT_SET`. The app runs and the map screen still requests nearby stations, but the
+map itself shows no tiles, and logcat reports a Maps *authorization failure*. The emulator also needs
+a system image with **Google APIs** or **Google Play**, or neither the map nor location works.

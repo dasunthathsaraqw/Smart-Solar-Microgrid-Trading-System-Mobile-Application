@@ -1,0 +1,19 @@
+# File: local.properties.example
+# Purpose: Template for local.properties, the machine-specific settings that are never committed
+#          (Android SDK path, Google Maps API key).
+# Author: M.K.E Dharmarathne it23142732
+# Date: 2026
+#
+# 1. Copy this file to local.properties in the same folder (the project root).
+# 2. Fill in the values below.
+#
+# local.properties is in .gitignore, so your key stays on your machine. Never put a real key in
+# this .example file: it IS committed.
+
+# Android SDK location. Android Studio writes this line for you on the first sync.
+# sdk.dir=C\:\\Users\\<you>\\AppData\\Local\\Android\\Sdk
+
+# Google Maps SDK for Android key, used by the Nearby Stations map.
+# How to get one: README, section 9, "Google Maps API key".
+# Left empty, the app still builds and runs, but the map shows no tiles.
+MAPS_API_KEY=
