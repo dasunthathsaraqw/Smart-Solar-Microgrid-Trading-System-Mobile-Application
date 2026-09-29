@@ -236,6 +236,10 @@
     <string name="title_select_time">Select time</string>
     <string name="msg_slot_updated">Slot updated</string>
     <string name="msg_no_changes">No changes to save</string>
+    <string name="msg_operator_access_changed">Your operator access has changed. Please sign in again.</string>
+    <string name="msg_operator_access_denied">Operator access denied. %1$s</string>
+    <string name="msg_operator_qr_not_found">QR or reservation not found. %1$s</string>
+    <string name="msg_operator_completion_uncertain">Completion may have succeeded. Check completed history before retrying. %1$s</string>
     <!-- Dashboard button (title case, like its neighbours; title_slot_management is the toolbar title) -->
     <string name="action_manage_slots">Manage Slots</string>
 

@@ -77,6 +77,15 @@ class SessionManager(context: Context) {
         }
     }
 
+    /** Refresh the operator fields returned by /api/auth/me without replacing the JWT or expiry. */
+    fun updateOperatorIdentity(name: String, email: String, stationId: String?) {
+        prefs.edit()
+            .putString(Constants.KEY_NAME, name)
+            .putString(Constants.KEY_EMAIL, email)
+            .putString(Constants.KEY_STATION_ID, stationId)
+            .apply()
+    }
+
     fun getJwt(): String? = prefs.getString(Constants.KEY_JWT, null)
     fun getUserType(): String? = prefs.getString(Constants.KEY_USER_TYPE, null)
     fun getEmail(): String? = prefs.getString(Constants.KEY_EMAIL, null)
