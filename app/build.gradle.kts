@@ -15,7 +15,7 @@ plugins {
 // in ~/.gradle/gradle.properties (keeps your IP out of git), this project's gradle.properties,
 // or on the command line: gradlew installDebug -PAPI_BASE_URL=http://192.168.1.5:5151/
 val apiBaseUrl: String = providers.gradleProperty("API_BASE_URL")
-    .getOrElse("http://10.0.2.2:5151/")
+    .getOrElse("http://18.140.114.6/")
     .trim()
     // Retrofit only accepts a base URL ending in '/', so add it here rather than crash at runtime.
     .let { if (it.endsWith("/")) it else "$it/" }
