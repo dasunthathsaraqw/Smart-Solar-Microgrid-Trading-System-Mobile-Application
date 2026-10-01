@@ -149,7 +149,7 @@ class QrScannerActivity : AppCompatActivity() {
     /** Arms the camera for ONE code; called again for each new scan (see Idle). */
     private fun startScanning() {
         if (hasCameraPermission() && !scannerArmed &&
-            lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
+            lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
         ) {
             scannerArmed = true
             binding.barcodeView.decodeSingle(scanCallback)

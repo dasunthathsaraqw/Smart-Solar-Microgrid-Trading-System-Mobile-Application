@@ -110,7 +110,7 @@ class QrDisplayActivity : AppCompatActivity() {
      * Renders [token] as a black-on-white QR bitmap. The size is larger than the on-screen
      * tile so it stays sharp when the ImageView scales it. Returns null if encoding fails.
      */
-    private fun encodeQr(token: String): Bitmap? = try {
+    internal fun encodeQr(token: String): Bitmap? = try {
         // Encode the token exactly as the server issued it; the operator's scanner reads the same
         // string back and sends it for verification.
         BarcodeEncoder().encodeBitmap(token, BarcodeFormat.QR_CODE, QR_SIZE_PX, QR_SIZE_PX)
