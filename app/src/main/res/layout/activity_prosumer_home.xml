@@ -46,8 +46,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="16dp">
+            android:paddingHorizontal="@dimen/screen_padding"
+            android:paddingVertical="@dimen/spacing_lg">
 
             <!-- ==================== HEADER ==================== -->
             <TextView
@@ -56,15 +56,14 @@
                 android:layout_height="wrap_content"
                 android:text="@string/dashboard_title"
                 android:textAppearance="?attr/textAppearanceLabelLarge"
-                android:textColor="@color/primary"
-                android:textStyle="bold" />
+                android:textColor="?attr/colorPrimary" />
 
             <TextView
                 android:id="@+id/tvGreeting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:textAppearance="@style/TextAppearance.App.ScreenTitle"
                 android:textStyle="bold"
                 tools:text="Hello, Kamal Perera" />
 
@@ -72,45 +71,45 @@
                 android:id="@+id/tvEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="@color/gray"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:textAppearance="@style/TextAppearance.App.Secondary"
                 tools:text="Email: kamal@example.com" />
 
             <TextView
                 android:id="@+id/tvNic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="@color/gray"
+                android:textAppearance="@style/TextAppearance.App.Secondary"
                 tools:text="NIC: 200012345678" />
 
             <!-- ==================== COUNTERS (2x2) ==================== -->
+            <!-- Tinted tiles; fill and number colour come from the status palette. -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/spacing_xl"
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardPending"
-                    style="@style/Widget.Material3.CardView.Outlined"
+                    style="@style/Widget.App.Card.Stat"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="6dp"
-                    android:layout_weight="1">
+                    android:layout_marginEnd="@dimen/spacing_xs"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/status_pending_bg">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="@dimen/card_padding">
 
                         <TextView
                             android:id="@+id/tvPendingCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                            android:textAppearance="?attr/textAppearanceHeadlineLarge"
                             android:textColor="@color/status_pending"
                             android:textStyle="bold"
                             tools:text="2" />
@@ -118,30 +117,33 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_xs"
                             android:text="@string/label_pending"
-                            android:textAppearance="?attr/textAppearanceBodyMedium" />
+                            android:textAppearance="?attr/textAppearanceLabelLarge"
+                            android:textColor="?attr/colorOnSurface" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardApproved"
-                    style="@style/Widget.Material3.CardView.Outlined"
+                    style="@style/Widget.App.Card.Stat"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:layout_weight="1">
+                    android:layout_marginStart="@dimen/spacing_xs"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/status_approved_bg">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="@dimen/card_padding">
 
                         <TextView
                             android:id="@+id/tvApprovedCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                            android:textAppearance="?attr/textAppearanceHeadlineLarge"
                             android:textColor="@color/status_approved"
                             android:textStyle="bold"
                             tools:text="3" />
@@ -149,8 +151,10 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_xs"
                             android:text="@string/label_approved_future"
-                            android:textAppearance="?attr/textAppearanceBodyMedium" />
+                            android:textAppearance="?attr/textAppearanceLabelLarge"
+                            android:textColor="?attr/colorOnSurface" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
@@ -158,28 +162,29 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/spacing_sm"
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardCompleted"
-                    style="@style/Widget.Material3.CardView.Outlined"
+                    style="@style/Widget.App.Card.Stat"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="6dp"
-                    android:layout_weight="1">
+                    android:layout_marginEnd="@dimen/spacing_xs"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/status_completed_bg">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="@dimen/card_padding">
 
                         <TextView
                             android:id="@+id/tvCompletedCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                            android:textAppearance="?attr/textAppearanceHeadlineLarge"
                             android:textColor="@color/status_completed"
                             android:textStyle="bold"
                             tools:text="15" />
@@ -187,30 +192,33 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_xs"
                             android:text="@string/label_completed"
-                            android:textAppearance="?attr/textAppearanceBodyMedium" />
+                            android:textAppearance="?attr/textAppearanceLabelLarge"
+                            android:textColor="?attr/colorOnSurface" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardCancelled"
-                    style="@style/Widget.Material3.CardView.Outlined"
+                    style="@style/Widget.App.Card.Stat"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:layout_weight="1">
+                    android:layout_marginStart="@dimen/spacing_xs"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/status_cancelled_bg">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="@dimen/card_padding">
 
                         <TextView
                             android:id="@+id/tvCancelledCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                            android:textAppearance="?attr/textAppearanceHeadlineLarge"
                             android:textColor="@color/status_cancelled"
                             android:textStyle="bold"
                             tools:text="1" />
@@ -218,8 +226,10 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_xs"
                             android:text="@string/label_cancelled"
-                            android:textAppearance="?attr/textAppearanceBodyMedium" />
+                            android:textAppearance="?attr/textAppearanceLabelLarge"
+                            android:textColor="?attr/colorOnSurface" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
@@ -228,29 +238,44 @@
             <!-- Always visible. Shows either nextReservationDetails or tvNoUpcoming. -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardNextReservation"
-                style="@style/Widget.Material3.CardView.Outlined"
+                style="@style/Widget.App.Card.Hero"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="@dimen/spacing_lg">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="@dimen/spacing_xl">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/label_next_reservation"
-                        android:textAppearance="?attr/textAppearanceLabelLarge"
-                        android:textColor="@color/gray" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/icon_size"
+                            android:layout_height="@dimen/icon_size"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_bolt"
+                            app:tint="?attr/colorOnPrimaryContainer" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_sm"
+                            android:text="@string/label_next_reservation"
+                            android:textAppearance="?attr/textAppearanceLabelLarge"
+                            android:textColor="?attr/colorOnPrimaryContainer" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/nextReservationDetails"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="@dimen/spacing_md"
                         android:orientation="vertical"
                         android:visibility="gone"
                         tools:visibility="visible">
@@ -259,7 +284,8 @@
                             android:id="@+id/tvStationName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textAppearance="?attr/textAppearanceTitleMedium"
+                            android:textAppearance="?attr/textAppearanceTitleLarge"
+                            android:textColor="?attr/colorOnPrimaryContainer"
                             android:textStyle="bold"
                             tools:text="Colombo North Hub" />
 
@@ -267,16 +293,17 @@
                             android:id="@+id/tvSlotTime"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:textAppearance="?attr/textAppearanceBodyMedium"
+                            android:layout_marginTop="@dimen/spacing_xs"
+                            android:textAppearance="?attr/textAppearanceBodyLarge"
+                            android:textColor="?attr/colorOnPrimaryContainer"
                             tools:text="25 Sep 2026, 14:00 – 15:00" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipStatus"
-                            style="@style/Widget.Material3.Chip.Assist"
+                            style="@style/Widget.App.Chip.Status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="@dimen/spacing_md"
                             android:clickable="false"
                             android:focusable="false"
                             app:ensureMinTouchTargetSize="false"
@@ -287,9 +314,10 @@
                         android:id="@+id/tvNoUpcoming"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="@dimen/spacing_md"
                         android:text="@string/label_no_upcoming_reservation"
-                        android:textAppearance="?attr/textAppearanceBodyLarge" />
+                        android:textAppearance="?attr/textAppearanceBodyLarge"
+                        android:textColor="?attr/colorOnPrimaryContainer" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -297,58 +325,71 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="@dimen/spacing_xl"
                 android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCreateBooking"
+                    style="@style/Widget.App.Button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="6dp"
+                    android:layout_marginEnd="@dimen/spacing_xs"
                     android:layout_weight="1"
-                    android:minHeight="56dp"
-                    android:paddingHorizontal="8dp"
-                    android:text="@string/action_create_booking" />
+                    android:minHeight="88dp"
+                    android:text="@string/action_create_booking"
+                    app:icon="@drawable/ic_add"
+                    app:iconGravity="top"
+                    app:iconPadding="@dimen/spacing_xs"
+                    app:iconSize="@dimen/icon_size" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnMyBookings"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Widget.App.Button.Tonal"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
+                    android:layout_marginStart="@dimen/spacing_xs"
                     android:layout_weight="1"
-                    android:minHeight="56dp"
-                    android:paddingHorizontal="8dp"
-                    android:text="@string/action_my_bookings" />
+                    android:minHeight="88dp"
+                    android:text="@string/action_my_bookings"
+                    app:icon="@drawable/ic_event"
+                    app:iconGravity="top"
+                    app:iconPadding="@dimen/spacing_xs"
+                    app:iconSize="@dimen/icon_size" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/spacing_sm"
                 android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnNearbyStations"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Widget.App.Button.Tonal"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="6dp"
+                    android:layout_marginEnd="@dimen/spacing_xs"
                     android:layout_weight="1"
-                    android:minHeight="56dp"
-                    android:paddingHorizontal="8dp"
-                    android:text="@string/action_nearby_stations" />
+                    android:minHeight="88dp"
+                    android:text="@string/action_nearby_stations"
+                    app:icon="@drawable/ic_place"
+                    app:iconGravity="top"
+                    app:iconPadding="@dimen/spacing_xs"
+                    app:iconSize="@dimen/icon_size" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnProfile"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Widget.App.Button.Tonal"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
+                    android:layout_marginStart="@dimen/spacing_xs"
                     android:layout_weight="1"
-                    android:minHeight="56dp"
-                    android:paddingHorizontal="8dp"
-                    android:text="@string/action_profile" />
+                    android:minHeight="88dp"
+                    android:text="@string/action_profile"
+                    app:icon="@drawable/ic_person"
+                    app:iconGravity="top"
+                    app:iconPadding="@dimen/spacing_xs"
+                    app:iconSize="@dimen/icon_size" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
@@ -370,7 +411,7 @@
         android:id="@+id/errorContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
+        android:layout_marginHorizontal="@dimen/spacing_xl"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:visibility="gone"
@@ -386,7 +427,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/error_loading_dashboard"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textAppearance="@style/TextAppearance.App.SectionHeader"
             android:textStyle="bold" />
 
         <!-- Backend / network message, set by the Activity -->
@@ -394,7 +435,7 @@
             android:id="@+id/tvErrorMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/spacing_sm"
             android:gravity="center"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="@color/error"
@@ -402,10 +443,10 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRetry"
+            style="@style/Widget.App.Button.Tonal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:minHeight="48dp"
+            android:layout_marginTop="@dimen/spacing_lg"
             android:text="@string/action_retry" />
     </LinearLayout>
 
@@ -413,12 +454,14 @@
     <!-- Pinned outside the scroll area so it stays reachable while loading or on error. -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogout"
-        style="@style/Widget.Material3.Button.OutlinedButton"
+        style="@style/Widget.App.Button.Outlined"
         android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginVertical="12dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/screen_padding"
+        android:layout_marginVertical="@dimen/spacing_md"
         android:text="@string/action_logout"
+        app:icon="@drawable/ic_logout"
+        app:iconSize="@dimen/icon_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

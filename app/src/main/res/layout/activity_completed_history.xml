@@ -22,6 +22,7 @@
 
     <!-- ==================== TOOLBAR ==================== -->
     <com.google.android.material.appbar.MaterialToolbar
+        style="@style/Widget.App.Toolbar"
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
@@ -39,7 +40,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        android:padding="16dp"
+        android:padding="@dimen/spacing_lg"
         android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/loadMoreBar"
@@ -55,8 +56,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="24dp"
-        android:paddingBottom="12dp"
+        android:paddingHorizontal="@dimen/spacing_xl"
+        android:paddingBottom="@dimen/spacing_md"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -68,7 +69,7 @@
             android:id="@+id/tvLoadMoreError"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="@dimen/spacing_sm"
             android:gravity="center"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="@color/error"
@@ -82,9 +83,9 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLoadMore"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+                style="@style/Widget.App.Button.Outlined"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
+                android:layout_height="wrap_content"
                 android:text="@string/action_load_more" />
 
             <ProgressBar
@@ -114,7 +115,7 @@
         android:id="@+id/tvEmpty"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
+        android:layout_marginHorizontal="@dimen/spacing_xl"
         android:gravity="center"
         android:text="@string/label_no_history"
         android:textAppearance="?attr/textAppearanceBodyLarge"
@@ -131,7 +132,7 @@
         android:id="@+id/errorContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
+        android:layout_marginHorizontal="@dimen/spacing_xl"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:visibility="gone"
@@ -146,7 +147,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/error_loading_history"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textAppearance="@style/TextAppearance.App.SectionHeader"
             android:textStyle="bold" />
 
         <!-- Backend / network message, set by the Activity -->
@@ -154,7 +155,7 @@
             android:id="@+id/tvErrorMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/spacing_sm"
             android:gravity="center"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="@color/error"
@@ -162,10 +163,10 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRetry"
+            style="@style/Widget.App.Button.Tonal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:minHeight="48dp"
+            android:layout_marginTop="@dimen/spacing_lg"
             android:text="@string/action_retry" />
     </LinearLayout>
 

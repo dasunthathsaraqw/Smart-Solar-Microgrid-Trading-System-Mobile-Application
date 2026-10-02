@@ -21,6 +21,7 @@
 
     <!-- ==================== TOOLBAR ==================== -->
     <com.google.android.material.appbar.MaterialToolbar
+        style="@style/Widget.App.Toolbar"
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
@@ -48,7 +49,7 @@
     <!-- Visible by default: the screen starts by getting the location. -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardLoading"
-        style="@style/Widget.Material3.CardView.Elevated"
+        style="@style/Widget.App.Card.Floating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -61,7 +62,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="20dp">
+            android:padding="@dimen/spacing_xl">
 
             <ProgressBar
                 android:id="@+id/progressBar"
@@ -73,7 +74,7 @@
                 android:id="@+id/tvLoadingMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/spacing_lg"
                 android:text="@string/msg_getting_location"
                 android:textAppearance="?attr/textAppearanceBodyLarge" />
         </LinearLayout>
@@ -83,10 +84,10 @@
     <!-- Floats near the bottom so the map (centred on the user) stays visible. -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardEmpty"
-        style="@style/Widget.Material3.CardView.Elevated"
+        style="@style/Widget.App.Card.Floating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="@dimen/spacing_xxl"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -97,7 +98,7 @@
             android:id="@+id/tvEmpty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="16dp"
+            android:padding="@dimen/spacing_lg"
             android:text="@string/label_no_nearby_stations"
             android:textAppearance="?attr/textAppearanceBodyLarge" />
     </com.google.android.material.card.MaterialCardView>
@@ -115,7 +116,7 @@
         android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingHorizontal="24dp"
+        android:paddingHorizontal="@dimen/spacing_xl"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -136,17 +137,15 @@
             android:id="@+id/btnGrantPermission"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:minHeight="48dp"
+            android:layout_marginTop="@dimen/spacing_xl"
             android:text="@string/action_grant_permission" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnOpenSettings"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.App.Button.Outlined"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:minHeight="48dp"
+            android:layout_marginTop="@dimen/spacing_sm"
             android:text="@string/action_open_settings"
             android:visibility="gone" />
     </LinearLayout>
@@ -162,7 +161,7 @@
         android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingHorizontal="24dp"
+        android:paddingHorizontal="@dimen/spacing_xl"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -175,7 +174,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/error_loading_nearby_stations"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textAppearance="@style/TextAppearance.App.SectionHeader"
             android:textStyle="bold" />
 
         <!-- Location or backend / network message, set by the Activity -->
@@ -183,7 +182,7 @@
             android:id="@+id/tvErrorMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/spacing_sm"
             android:gravity="center"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="@color/error"
@@ -191,10 +190,10 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRetry"
+            style="@style/Widget.App.Button.Tonal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:minHeight="48dp"
+            android:layout_marginTop="@dimen/spacing_lg"
             android:text="@string/action_retry" />
     </LinearLayout>
 

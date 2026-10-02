@@ -1,8 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Lighter status colors so counters and chips stay readable on dark surfaces -->
+    <color name="primary">#FF8FD9A0</color>
+    <color name="primary_dark">#FF6BBF80</color>
+    <color name="on_primary">#FF00391B</color>
+    <color name="primary_container">#FF00522A</color>
+    <color name="on_primary_container">#FFB8F2C6</color>
+
+    <color name="secondary">#FFF5BF4F</color>
+    <color name="on_secondary">#FF412D00</color>
+    <color name="secondary_container">#FF5E4200</color>
+    <color name="on_secondary_container">#FFFFDEA3</color>
+
+    <color name="tertiary">#FF5DD4EE</color>
+    <color name="on_tertiary">#FF00363F</color>
+
+    <color name="app_background">#FF101411</color>
+    <color name="app_surface">#FF101411</color>
+    <color name="on_surface">#FFE1E3DE</color>
+    <color name="surface_variant">#FF404942</color>
+    <color name="on_surface_variant">#FFC0C9BF</color>
+    <color name="outline">#FF8A938A</color>
+
+    <color name="error">#FFF2B8B5</color>
+    <color name="on_error">#FF601410</color>
+    <color name="success">#FF81C784</color>
+    <color name="gray">#FFA9B1AA</color>
+
+    <!-- Lighter status colours so counters and chips stay readable on dark surfaces -->
     <color name="status_pending">#FFFFB74D</color>
     <color name="status_approved">#FF4DB6AC</color>
     <color name="status_completed">#FF81C784</color>
     <color name="status_cancelled">#FFE57373</color>
+    <color name="status_pending_bg">#FF4A3200</color>
+    <color name="status_approved_bg">#FF00362F</color>
+    <color name="status_completed_bg">#FF12391A</color>
+    <color name="status_cancelled_bg">#FF4D1512</color>
 </resources>

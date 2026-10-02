@@ -18,9 +18,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingHorizontal="24dp"
-    android:paddingTop="24dp"
-    android:paddingBottom="8dp">
+    android:paddingHorizontal="@dimen/spacing_xl"
+    android:paddingTop="@dimen/spacing_xl"
+    android:paddingBottom="@dimen/spacing_sm">
 
     <TextView
         android:id="@+id/tvDialogTitle"
@@ -32,10 +32,10 @@
     <!-- ==================== START TIME ==================== -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilStartTime"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        style="@style/Widget.App.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/spacing_lg"
         android:hint="@string/label_start_time">
 
         <!-- Read-only: a tap opens the pickers (set up by the Activity) -->
@@ -53,10 +53,10 @@
     <!-- ==================== END TIME ==================== -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilEndTime"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        style="@style/Widget.App.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/spacing_md"
         android:hint="@string/label_end_time">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -73,10 +73,10 @@
     <!-- ==================== CAPACITY ==================== -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilCapacity"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        style="@style/Widget.App.TextInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/spacing_md"
         android:hint="@string/label_capacity_kw">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -94,7 +94,7 @@
         android:id="@+id/tvError"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/spacing_md"
         android:textAppearance="?attr/textAppearanceBodyMedium"
         android:textColor="@color/error"
         android:visibility="gone"
@@ -106,7 +106,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/spacing_sm"
         android:gravity="center_vertical|end"
         android:orientation="horizontal">
 
@@ -115,19 +115,19 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/spacing_sm"
             android:visibility="gone" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancel"
-            style="@style/Widget.Material3.Button.TextButton"
+            style="@style/Widget.App.Button.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/action_cancel" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSave"
-            style="@style/Widget.Material3.Button.TextButton"
+            style="@style/Widget.App.Button.Text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/action_save_slot" />

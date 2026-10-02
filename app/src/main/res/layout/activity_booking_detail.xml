@@ -20,6 +20,7 @@
 
     <!-- ==================== TOOLBAR ==================== -->
     <com.google.android.material.appbar.MaterialToolbar
+        style="@style/Widget.App.Toolbar"
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
@@ -59,12 +60,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="16dp">
+            android:paddingHorizontal="@dimen/screen_padding"
+            android:paddingVertical="@dimen/spacing_lg">
 
             <!-- ==================== RESERVATION ==================== -->
             <com.google.android.material.card.MaterialCardView
-                style="@style/Widget.Material3.CardView.Outlined"
+                style="@style/Widget.App.Card.Hero"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -72,69 +73,72 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="@dimen/spacing_xl">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/label_station_name"
-                        android:textAppearance="?attr/textAppearanceLabelLarge"
-                        android:textColor="@color/gray" />
+                        android:textAppearance="@style/TextAppearance.App.Caption"
+                        android:textColor="?attr/colorOnPrimaryContainer" />
 
                     <TextView
                         android:id="@+id/tvStationName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textAppearance="@style/TextAppearance.App.SectionHeader"
+                        android:textColor="?attr/colorOnPrimaryContainer"
                         android:textStyle="bold"
                         tools:text="Colombo North Hub" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="@dimen/spacing_lg"
                         android:text="@string/label_slot_time"
-                        android:textAppearance="?attr/textAppearanceLabelLarge"
-                        android:textColor="@color/gray" />
+                        android:textAppearance="@style/TextAppearance.App.Caption"
+                        android:textColor="?attr/colorOnPrimaryContainer" />
 
                     <TextView
                         android:id="@+id/tvSlotTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textAppearance="@style/TextAppearance.App.SectionHeader"
+                        android:textColor="?attr/colorOnPrimaryContainer"
                         android:textStyle="bold"
                         tools:text="25 Sep 2026, 14:00 – 15:00" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="@dimen/spacing_lg"
                         android:text="@string/label_capacity"
-                        android:textAppearance="?attr/textAppearanceLabelLarge"
-                        android:textColor="@color/gray" />
+                        android:textAppearance="@style/TextAppearance.App.Caption"
+                        android:textColor="?attr/colorOnPrimaryContainer" />
 
                     <TextView
                         android:id="@+id/tvCapacity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textAppearance="@style/TextAppearance.App.SectionHeader"
+                        android:textColor="?attr/colorOnPrimaryContainer"
                         android:textStyle="bold"
                         tools:text="5.5 kW" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="@dimen/spacing_lg"
                         android:text="@string/label_status"
-                        android:textAppearance="?attr/textAppearanceLabelLarge"
-                        android:textColor="@color/gray" />
+                        android:textAppearance="@style/TextAppearance.App.Caption"
+                        android:textColor="?attr/colorOnPrimaryContainer" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipStatus"
-                        style="@style/Widget.Material3.Chip.Assist"
+                        style="@style/Widget.App.Chip.Status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="@dimen/spacing_xs"
                         android:clickable="false"
                         android:focusable="false"
                         app:ensureMinTouchTargetSize="false"
@@ -145,16 +149,16 @@
             <!-- ==================== TIMELINE ==================== -->
             <!-- Created is always present; the others are hidden by the Activity when null. -->
             <com.google.android.material.card.MaterialCardView
-                style="@style/Widget.Material3.CardView.Outlined"
+                style="@style/Widget.App.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="@dimen/spacing_md">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="@dimen/card_padding">
 
                     <LinearLayout
                         android:id="@+id/rowCreated"
@@ -166,7 +170,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/label_created_at"
-                            android:textAppearance="?attr/textAppearanceLabelLarge"
+                            android:textAppearance="@style/TextAppearance.App.Caption"
                             android:textColor="@color/gray" />
 
                         <TextView
@@ -181,7 +185,7 @@
                         android:id="@+id/rowApproved"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="@dimen/spacing_md"
                         android:orientation="vertical"
                         android:visibility="gone"
                         tools:visibility="visible">
@@ -190,7 +194,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/label_approved_at"
-                            android:textAppearance="?attr/textAppearanceLabelLarge"
+                            android:textAppearance="@style/TextAppearance.App.Caption"
                             android:textColor="@color/gray" />
 
                         <TextView
@@ -205,7 +209,7 @@
                         android:id="@+id/rowCompleted"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="@dimen/spacing_md"
                         android:orientation="vertical"
                         android:visibility="gone">
 
@@ -213,7 +217,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/label_completed_at"
-                            android:textAppearance="?attr/textAppearanceLabelLarge"
+                            android:textAppearance="@style/TextAppearance.App.Caption"
                             android:textColor="@color/gray" />
 
                         <TextView
@@ -228,7 +232,7 @@
                         android:id="@+id/rowCancelled"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="@dimen/spacing_md"
                         android:orientation="vertical"
                         android:visibility="gone">
 
@@ -236,7 +240,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/label_cancelled_at"
-                            android:textAppearance="?attr/textAppearanceLabelLarge"
+                            android:textAppearance="@style/TextAppearance.App.Caption"
                             android:textColor="@color/gray" />
 
                         <TextView
@@ -251,7 +255,7 @@
                         android:id="@+id/rowCancellationReason"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="@dimen/spacing_md"
                         android:orientation="vertical"
                         android:visibility="gone">
 
@@ -259,7 +263,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/label_cancellation_reason"
-                            android:textAppearance="?attr/textAppearanceLabelLarge"
+                            android:textAppearance="@style/TextAppearance.App.Caption"
                             android:textColor="@color/gray" />
 
                         <TextView
@@ -292,7 +296,7 @@
         android:id="@+id/errorContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
+        android:layout_marginHorizontal="@dimen/spacing_xl"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:visibility="gone"
@@ -307,7 +311,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/error_loading_detail"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textAppearance="@style/TextAppearance.App.SectionHeader"
             android:textStyle="bold" />
 
         <!-- Backend / network message, set by the Activity -->
@@ -315,7 +319,7 @@
             android:id="@+id/tvErrorMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/spacing_sm"
             android:gravity="center"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="@color/error"
@@ -323,10 +327,10 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRetry"
+            style="@style/Widget.App.Button.Tonal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:minHeight="48dp"
+            android:layout_marginTop="@dimen/spacing_lg"
             android:text="@string/action_retry" />
     </LinearLayout>
 
@@ -345,34 +349,43 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnShowQr"
+            style="@style/Widget.App.Button"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="12dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_padding"
+            android:layout_marginBottom="@dimen/spacing_sm"
             android:text="@string/action_show_qr"
             android:visibility="gone"
+            app:icon="@drawable/ic_qr_code"
+            app:iconSize="@dimen/icon_size"
             tools:visibility="visible" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnUpdateSlot"
-            style="@style/Widget.Material3.Button.TonalButton"
+            style="@style/Widget.App.Button.Tonal"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="12dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_padding"
+            android:layout_marginBottom="@dimen/spacing_sm"
             android:text="@string/action_update_slot"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:icon="@drawable/ic_edit"
+            app:iconSize="@dimen/icon_size" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancelBooking"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.App.Button.Outlined"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="12dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/screen_padding"
+            android:layout_marginBottom="@dimen/spacing_md"
             android:text="@string/action_cancel_booking"
             android:textColor="@color/error"
-            android:visibility="gone" />
+            android:visibility="gone"
+            app:icon="@drawable/ic_cancel"
+            app:iconSize="@dimen/icon_size"
+            app:iconTint="@color/error"
+            app:strokeColor="@color/error" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

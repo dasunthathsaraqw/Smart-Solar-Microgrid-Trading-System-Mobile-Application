@@ -16,24 +16,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingHorizontal="24dp"
-    android:paddingTop="24dp"
-    android:paddingBottom="32dp">
+    android:paddingHorizontal="@dimen/spacing_xl"
+    android:paddingTop="@dimen/spacing_xl"
+    android:paddingBottom="@dimen/spacing_xxl">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/title_booking_detail"
         android:textAppearance="?attr/textAppearanceLabelLarge"
-        android:textColor="@color/primary"
-        android:textStyle="bold" />
+        android:textColor="?attr/colorPrimary" />
 
     <TextView
         android:id="@+id/tvProsumerName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textAppearance="?attr/textAppearanceHeadlineSmall"
+        android:layout_marginTop="@dimen/spacing_xs"
+        android:textAppearance="@style/TextAppearance.App.ScreenTitle"
         android:textStyle="bold"
         tools:text="Kamal Perera" />
 
@@ -41,10 +40,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/spacing_lg"
         android:text="@string/label_nic"
-        android:textAppearance="?attr/textAppearanceLabelLarge"
-        android:textColor="@color/gray" />
+        android:textAppearance="@style/TextAppearance.App.Caption" />
 
     <TextView
         android:id="@+id/tvNic"
@@ -56,10 +54,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/spacing_md"
         android:text="@string/label_slot_time"
-        android:textAppearance="?attr/textAppearanceLabelLarge"
-        android:textColor="@color/gray" />
+        android:textAppearance="@style/TextAppearance.App.Caption" />
 
     <TextView
         android:id="@+id/tvSlotTime"
@@ -71,10 +68,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/spacing_md"
         android:text="@string/label_capacity"
-        android:textAppearance="?attr/textAppearanceLabelLarge"
-        android:textColor="@color/gray" />
+        android:textAppearance="@style/TextAppearance.App.Caption" />
 
     <TextView
         android:id="@+id/tvCapacity"
@@ -86,17 +82,16 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/spacing_md"
         android:text="@string/label_status"
-        android:textAppearance="?attr/textAppearanceLabelLarge"
-        android:textColor="@color/gray" />
+        android:textAppearance="@style/TextAppearance.App.Caption" />
 
     <com.google.android.material.chip.Chip
         android:id="@+id/chipStatus"
-        style="@style/Widget.Material3.Chip.Assist"
+        style="@style/Widget.App.Chip.Status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="@dimen/spacing_xs"
         android:clickable="false"
         android:focusable="false"
         app:ensureMinTouchTargetSize="false"
@@ -105,10 +100,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/spacing_md"
         android:text="@string/label_created_at"
-        android:textAppearance="?attr/textAppearanceLabelLarge"
-        android:textColor="@color/gray" />
+        android:textAppearance="@style/TextAppearance.App.Caption" />
 
     <TextView
         android:id="@+id/tvCreatedAt"
@@ -122,7 +116,7 @@
         android:id="@+id/rowCompleted"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/spacing_md"
         android:orientation="vertical"
         android:visibility="gone"
         tools:visibility="visible">
@@ -131,8 +125,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/label_completed_at"
-            android:textAppearance="?attr/textAppearanceLabelLarge"
-            android:textColor="@color/gray" />
+            android:textAppearance="@style/TextAppearance.App.Caption" />
 
         <TextView
             android:id="@+id/tvCompletedAt"

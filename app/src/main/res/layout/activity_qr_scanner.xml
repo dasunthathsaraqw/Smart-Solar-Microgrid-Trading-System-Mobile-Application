@@ -20,6 +20,7 @@
 
     <!-- ==================== TOOLBAR ==================== -->
     <com.google.android.material.appbar.MaterialToolbar
+        style="@style/Widget.App.Toolbar"
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
@@ -47,11 +48,11 @@
     <!-- A card (theme surface colours) so the text reads on any camera image, light or dark. -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardInstruction"
-        style="@style/Widget.Material3.CardView.Elevated"
+        style="@style/Widget.App.Card.Floating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="@dimen/spacing_xl"
+        android:layout_marginTop="@dimen/spacing_lg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
@@ -61,8 +62,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="12dp"
+            android:paddingHorizontal="@dimen/spacing_lg"
+            android:paddingVertical="@dimen/spacing_md"
             android:text="@string/msg_scanning"
             android:textAppearance="?attr/textAppearanceBodyMedium" />
     </com.google.android.material.card.MaterialCardView>
@@ -71,7 +72,7 @@
     <!-- Verifying / Completing. Message set by the Activity. -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardBusy"
-        style="@style/Widget.Material3.CardView.Elevated"
+        style="@style/Widget.App.Card.Floating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
@@ -86,7 +87,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="20dp">
+            android:padding="@dimen/spacing_xl">
 
             <ProgressBar
                 android:id="@+id/progressBar"
@@ -98,7 +99,7 @@
                 android:id="@+id/tvBusyMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/spacing_lg"
                 android:text="@string/msg_verifying"
                 android:textAppearance="?attr/textAppearanceBodyLarge" />
         </LinearLayout>
@@ -112,10 +113,10 @@
            failed     -> details + error message + Scan Again (+ Complete Charge to retry) -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/resultPanel"
-        style="@style/Widget.Material3.CardView.Elevated"
+        style="@style/Widget.App.Card.Floating"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/spacing_lg"
         android:visibility="gone"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -129,14 +130,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="@dimen/spacing_lg">
 
             <TextView
                 android:id="@+id/tvResultTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/label_scan_result"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textAppearance="@style/TextAppearance.App.SectionHeader"
                 android:textStyle="bold" />
 
             <!-- The reservation details as one block, so the Activity can hide them all when the
@@ -150,7 +151,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/spacing_md"
                 android:text="@string/label_prosumer_name"
                 android:textAppearance="?attr/textAppearanceLabelMedium"
                 android:textColor="@color/gray" />
@@ -174,7 +175,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/spacing_sm"
                 android:text="@string/label_station_name"
                 android:textAppearance="?attr/textAppearanceLabelMedium"
                 android:textColor="@color/gray" />
@@ -189,7 +190,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/spacing_sm"
                 android:text="@string/label_slot_time"
                 android:textAppearance="?attr/textAppearanceLabelMedium"
                 android:textColor="@color/gray" />
@@ -204,7 +205,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/spacing_sm"
                 android:text="@string/label_capacity"
                 android:textAppearance="?attr/textAppearanceLabelMedium"
                 android:textColor="@color/gray" />
@@ -222,7 +223,9 @@
                 android:id="@+id/tvWarning"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:background="@drawable/bg_callout_warning"
+                android:padding="@dimen/spacing_md"
                 android:text="@string/msg_complete_charge_warning"
                 android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="@color/status_pending" />
@@ -232,7 +235,7 @@
                 android:id="@+id/tvResultMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/spacing_md"
                 android:textAppearance="?attr/textAppearanceBodyLarge"
                 android:textStyle="bold"
                 android:visibility="gone"
@@ -242,28 +245,26 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/spacing_lg"
                 android:orientation="horizontal">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnScanAgain"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    style="@style/Widget.App.Button.Outlined"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="6dp"
+                    android:layout_marginEnd="@dimen/spacing_xs"
                     android:layout_weight="1"
-                    android:minHeight="56dp"
-                    android:paddingHorizontal="8dp"
+                    android:paddingHorizontal="@dimen/spacing_sm"
                     android:text="@string/action_scan_again" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnCompleteCharge"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
+                    android:layout_marginStart="@dimen/spacing_xs"
                     android:layout_weight="1"
-                    android:minHeight="56dp"
-                    android:paddingHorizontal="8dp"
+                    android:paddingHorizontal="@dimen/spacing_sm"
                     android:text="@string/action_complete_charge" />
             </LinearLayout>
         </LinearLayout>
@@ -281,7 +282,7 @@
         android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingHorizontal="24dp"
+        android:paddingHorizontal="@dimen/spacing_xl"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -301,17 +302,15 @@
             android:id="@+id/btnGrantPermission"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:minHeight="48dp"
+            android:layout_marginTop="@dimen/spacing_xl"
             android:text="@string/action_grant_permission" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnOpenSettings"
-            style="@style/Widget.Material3.Button.OutlinedButton"
+            style="@style/Widget.App.Button.Outlined"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:minHeight="48dp"
+            android:layout_marginTop="@dimen/spacing_sm"
             android:text="@string/action_open_settings"
             android:visibility="gone" />
     </LinearLayout>

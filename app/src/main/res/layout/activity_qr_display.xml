@@ -19,6 +19,7 @@
     <!-- ==================== TOOLBAR ==================== -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
+        style="@style/Widget.App.Toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,8 +49,8 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingHorizontal="24dp"
-            android:paddingVertical="16dp">
+            android:paddingHorizontal="@dimen/screen_padding"
+            android:paddingVertical="@dimen/spacing_lg">
 
             <TextView
                 android:id="@+id/tvStationName"
@@ -57,6 +58,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
+                android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold"
                 tools:text="Colombo North Hub" />
 
@@ -64,31 +66,42 @@
                 android:id="@+id/tvSlotTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/spacing_xs"
                 android:gravity="center"
-                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textAppearance="@style/TextAppearance.App.Secondary"
                 tools:text="25 Sep 2026, 14:00 – 15:00" />
 
-            <!-- White tile + padding = the QR's quiet zone, whatever the app theme is. -->
-            <ImageView
-                android:id="@+id/ivQr"
-                android:layout_width="280dp"
-                android:layout_height="280dp"
-                android:layout_marginTop="24dp"
-                android:background="@color/white"
-                android:contentDescription="@string/content_desc_qr_code"
-                android:padding="12dp"
-                android:scaleType="fitCenter" />
+            <!-- Framed ticket: a white card with a primary outline holds the code. The white
+                 ImageView background + padding is the QR's quiet zone, whatever the theme. -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xl"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/corner_lg"
+                app:cardElevation="@dimen/elevation_card"
+                app:strokeColor="?attr/colorPrimary"
+                app:strokeWidth="2dp">
+
+                <ImageView
+                    android:id="@+id/ivQr"
+                    android:layout_width="280dp"
+                    android:layout_height="280dp"
+                    android:layout_margin="@dimen/spacing_sm"
+                    android:background="@color/white"
+                    android:contentDescription="@string/content_desc_qr_code"
+                    android:padding="@dimen/spacing_md"
+                    android:scaleType="fitCenter" />
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 android:id="@+id/tvValidNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="@dimen/spacing_xl"
                 android:gravity="center"
                 android:text="@string/label_qr_valid_note"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="@color/gray" />
+                android:textAppearance="@style/TextAppearance.App.Secondary" />
         </LinearLayout>
     </ScrollView>
 
@@ -109,7 +122,7 @@
         android:id="@+id/errorContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
+        android:layout_marginHorizontal="@dimen/spacing_xl"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:visibility="gone"
@@ -124,7 +137,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/error_loading_qr"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textAppearance="@style/TextAppearance.App.SectionHeader"
             android:textStyle="bold" />
 
         <!-- Backend / network message, set by the Activity (e.g. "only for Approved reservations") -->
@@ -132,7 +145,7 @@
             android:id="@+id/tvErrorMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/spacing_sm"
             android:gravity="center"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="@color/error"
@@ -140,10 +153,10 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRetry"
+            style="@style/Widget.App.Button.Tonal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:minHeight="48dp"
+            android:layout_marginTop="@dimen/spacing_lg"
             android:text="@string/action_retry" />
     </LinearLayout>
 

@@ -2,15 +2,43 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="gray">#FF757575</color>
-    <color name="primary">#FF1565C0</color>
-    <color name="primary_dark">#FF0D47A1</color>
-    <color name="error">#FFB00020</color>
-    <color name="success">#FF2E7D32</color>
 
-    <!-- Reservation status colors (light theme; lighter variants live in values-night) -->
+    <!-- Brand: forest green (primary) + solar amber (secondary) + sky teal (tertiary).
+         Dark-theme values live in values-night/colors.xml -->
+    <color name="primary">#FF1B6B3A</color>
+    <color name="primary_dark">#FF0F4D27</color>
+    <color name="on_primary">#FFFFFFFF</color>
+    <color name="primary_container">#FFB8F2C6</color>
+    <color name="on_primary_container">#FF00210E</color>
+
+    <color name="secondary">#FF7A5900</color>
+    <color name="on_secondary">#FFFFFFFF</color>
+    <color name="secondary_container">#FFFFDEA3</color>
+    <color name="on_secondary_container">#FF261900</color>
+
+    <color name="tertiary">#FF00677A</color>
+    <color name="on_tertiary">#FFFFFFFF</color>
+
+    <color name="app_background">#FFF7FAF3</color>
+    <color name="app_surface">#FFFBFDF8</color>
+    <color name="on_surface">#FF191C1A</color>
+    <color name="surface_variant">#FFDCE5DA</color>
+    <color name="on_surface_variant">#FF404942</color>
+    <color name="outline">#FF707971</color>
+
+    <!-- Semantic (names referenced from Kotlin: error, success, gray) -->
+    <color name="error">#FFB3261E</color>
+    <color name="on_error">#FFFFFFFF</color>
+    <color name="success">#FF2E7D32</color>
+    <color name="gray">#FF5C645E</color>
+
+    <!-- Reservation status: text/icon colour + tinted chip background -->
     <color name="status_pending">#FF9A5B00</color>
     <color name="status_approved">#FF00796B</color>
     <color name="status_completed">#FF2E7D32</color>
     <color name="status_cancelled">#FFC62828</color>
+    <color name="status_pending_bg">#FFFFE9C7</color>
+    <color name="status_approved_bg">#FFC8EFE9</color>
+    <color name="status_completed_bg">#FFD2EDD3</color>
+    <color name="status_cancelled_bg">#FFFFDAD6</color>
 </resources>

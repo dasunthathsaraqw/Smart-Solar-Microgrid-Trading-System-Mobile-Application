@@ -12,8 +12,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="24dp"
-    android:paddingVertical="16dp"
+    android:paddingHorizontal="@dimen/spacing_xl"
+    android:paddingVertical="@dimen/spacing_lg"
     tools:context=".ui.auth.LoginActivity">
 
     <!-- ==================== FORM ==================== -->
@@ -28,31 +28,48 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.4">
 
+        <!-- Brand mark -->
+        <FrameLayout
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_brand_tile">
+
+            <ImageView
+                android:id="@+id/ivBrand"
+                android:layout_width="@dimen/icon_size_lg"
+                android:layout_height="@dimen/icon_size_lg"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:padding="@dimen/spacing_sm"
+                android:src="@drawable/ic_brand_sun"
+                app:tint="?attr/colorOnPrimaryContainer" />
+        </FrameLayout>
+
         <TextView
             android:id="@+id/tvLoginTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:layout_marginTop="@dimen/spacing_xl"
             android:text="@string/login_title"
             android:textAppearance="?attr/textAppearanceHeadlineMedium"
+            android:textColor="?attr/colorOnSurface"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvLoginSubtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
+            android:layout_marginTop="@dimen/spacing_sm"
             android:text="@string/login_subtitle"
             android:textAppearance="?attr/textAppearanceBodyLarge"
             android:textColor="@color/gray" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilEmail"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.App.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="@dimen/spacing_xxl"
             android:hint="@string/label_email"
             app:placeholderText="@string/hint_email">
 
@@ -68,10 +85,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilPassword"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.App.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/spacing_md"
             android:hint="@string/label_password"
             app:endIconMode="password_toggle"
             app:placeholderText="@string/hint_password">
@@ -88,25 +105,25 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
+            style="@style/Widget.App.Button"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginTop="24dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xl"
             android:text="@string/action_login" />
 
         <TextView
             android:id="@+id/tvRegisterLink"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/spacing_sm"
             android:background="?attr/selectableItemBackground"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
             android:minHeight="48dp"
             android:text="@string/link_register"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="@color/primary"
-            android:textStyle="bold" />
+            android:textAppearance="?attr/textAppearanceLabelLarge"
+            android:textColor="?attr/colorPrimary" />
     </LinearLayout>
 
     <!-- ==================== PROGRESS ==================== -->

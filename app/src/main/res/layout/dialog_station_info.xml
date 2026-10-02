@@ -12,24 +12,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingHorizontal="24dp"
-    android:paddingTop="24dp"
-    android:paddingBottom="16dp">
+    android:paddingHorizontal="@dimen/spacing_xl"
+    android:paddingTop="@dimen/spacing_xl"
+    android:paddingBottom="@dimen/spacing_lg">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/title_station_detail"
         android:textAppearance="?attr/textAppearanceLabelLarge"
-        android:textColor="@color/primary"
-        android:textStyle="bold" />
+        android:textColor="?attr/colorPrimary" />
 
     <TextView
         android:id="@+id/tvStationName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textAppearance="?attr/textAppearanceHeadlineSmall"
+        android:layout_marginTop="@dimen/spacing_xs"
+        android:textAppearance="@style/TextAppearance.App.ScreenTitle"
         android:textStyle="bold"
         tools:text="Colombo North Hub" />
 
@@ -37,10 +36,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="@dimen/spacing_lg"
         android:text="@string/label_distance_km"
-        android:textAppearance="?attr/textAppearanceLabelLarge"
-        android:textColor="@color/gray" />
+        android:textAppearance="@style/TextAppearance.App.Caption" />
 
     <TextView
         android:id="@+id/tvDistance"
@@ -52,10 +50,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/spacing_md"
         android:text="@string/label_schedule"
-        android:textAppearance="?attr/textAppearanceLabelLarge"
-        android:textColor="@color/gray" />
+        android:textAppearance="@style/TextAppearance.App.Caption" />
 
     <TextView
         android:id="@+id/tvSchedule"
@@ -67,10 +64,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/spacing_md"
         android:text="@string/label_capacity"
-        android:textAppearance="?attr/textAppearanceLabelLarge"
-        android:textColor="@color/gray" />
+        android:textAppearance="@style/TextAppearance.App.Caption" />
 
     <TextView
         android:id="@+id/tvCapacity"
@@ -82,24 +78,29 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/spacing_md"
         android:text="@string/label_available_slots"
-        android:textAppearance="?attr/textAppearanceLabelLarge"
-        android:textColor="@color/gray" />
+        android:textAppearance="@style/TextAppearance.App.Caption" />
 
+    <!-- Highlighted like the availability pill on the station list -->
     <TextView
         android:id="@+id/tvAvailableSlots"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceBodyLarge"
-        android:textStyle="bold"
+        android:layout_marginTop="@dimen/spacing_xs"
+        android:background="@drawable/bg_pill_primary"
+        android:paddingHorizontal="@dimen/spacing_md"
+        android:paddingVertical="@dimen/spacing_xs"
+        android:textAppearance="?attr/textAppearanceLabelLarge"
+        android:textColor="?attr/colorOnPrimaryContainer"
         tools:text="12" />
 
     <!-- ==================== ACTION ==================== -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnViewSlots"
+        style="@style/Widget.App.Button"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="24dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_xl"
         android:text="@string/action_view_slots" />
 </LinearLayout>
