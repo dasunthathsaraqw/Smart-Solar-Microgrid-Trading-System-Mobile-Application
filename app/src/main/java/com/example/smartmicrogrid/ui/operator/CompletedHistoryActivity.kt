@@ -5,6 +5,7 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.smartmicrogrid.R
+import com.example.smartmicrogrid.ui.common.attachOperatorBottomNav
 import com.example.smartmicrogrid.data.remote.dto.ReservationResponse
 import com.example.smartmicrogrid.databinding.ActivityCompletedHistoryBinding
 import com.example.smartmicrogrid.ui.common.handleSessionExpired
@@ -36,6 +37,7 @@ class CompletedHistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCompletedHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        attachOperatorBottomNav(R.id.nav_history)
 
         binding.toolbar.setNavigationOnClickListener { finish() }
         binding.rvHistory.adapter = adapter

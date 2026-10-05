@@ -281,4 +281,13 @@
     <!-- %1$s is the time of the last successful sync, e.g. "25 Sep 2026, 14:00" -->
     <string name="label_showing_cached_data">Showing offline data from %1$s</string>
     <string name="label_last_synced">Last synced %1$s</string>
+
+    <!-- ==================== BOTTOM NAVIGATION ==================== -->
+    <string name="nav_home">Home</string>
+    <string name="nav_bookings">Bookings</string>
+    <string name="nav_nearby">Nearby</string>
+    <string name="nav_profile">Profile</string>
+    <string name="nav_pending">Pending</string>
+    <string name="nav_history">History</string>
+    <string name="nav_slots">Slots</string>
 </resources>

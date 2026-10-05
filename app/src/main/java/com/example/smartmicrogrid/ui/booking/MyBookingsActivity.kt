@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.smartmicrogrid.R
 import com.example.smartmicrogrid.databinding.ActivityMyBookingsBinding
+import com.example.smartmicrogrid.ui.common.attachProsumerBottomNav
 import com.example.smartmicrogrid.ui.common.handleSessionExpired
 import com.example.smartmicrogrid.ui.common.showIfCached
 import com.example.smartmicrogrid.utils.Constants
@@ -47,6 +49,7 @@ class MyBookingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMyBookingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        attachProsumerBottomNav(R.id.nav_bookings)
 
         binding.toolbar.setNavigationOnClickListener { finish() }
         binding.rvBookings.adapter = adapter

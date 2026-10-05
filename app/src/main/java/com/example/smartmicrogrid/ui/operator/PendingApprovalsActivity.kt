@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.smartmicrogrid.R
 import com.example.smartmicrogrid.databinding.ActivityPendingApprovalsBinding
+import com.example.smartmicrogrid.ui.common.attachOperatorBottomNav
 import com.example.smartmicrogrid.ui.common.handleSessionExpired
 import com.example.smartmicrogrid.viewmodel.PendingApprovalsViewModel
 import com.example.smartmicrogrid.viewmodel.PendingListState
@@ -34,6 +36,7 @@ class PendingApprovalsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPendingApprovalsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        attachOperatorBottomNav(R.id.nav_pending)
 
         binding.toolbar.setNavigationOnClickListener { finish() }
         binding.rvPending.adapter = adapter

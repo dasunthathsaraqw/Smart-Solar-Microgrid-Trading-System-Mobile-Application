@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.smartmicrogrid.R
+import com.example.smartmicrogrid.ui.common.attachProsumerBottomNav
 import com.example.smartmicrogrid.data.remote.dto.ProsumerResponse
 import com.example.smartmicrogrid.data.remote.dto.UpdateOwnProfileRequest
 import com.example.smartmicrogrid.databinding.ActivityProfileBinding
@@ -64,6 +65,7 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        attachProsumerBottomNav(R.id.nav_profile)
 
         keepRestoredFields = savedInstanceState != null
 

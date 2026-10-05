@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.smartmicrogrid.R
+import com.example.smartmicrogrid.ui.common.attachProsumerBottomNav
 import com.example.smartmicrogrid.data.remote.dto.ProsumerDashboardResponse
 import com.example.smartmicrogrid.data.remote.dto.ReservationResponse
 import com.example.smartmicrogrid.databinding.ActivityProsumerHomeBinding
@@ -54,6 +55,7 @@ class ProsumerHomeActivity : AppCompatActivity() {
 
         binding = ActivityProsumerHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        attachProsumerBottomNav(R.id.nav_home)
 
         showHeader()
         setupListeners()

@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.smartmicrogrid.R
+import com.example.smartmicrogrid.ui.common.attachOperatorBottomNav
 import com.example.smartmicrogrid.data.remote.dto.OperatorDashboardResponse
 import com.example.smartmicrogrid.databinding.ActivityOperatorHomeBinding
 import com.example.smartmicrogrid.databinding.ItemOperatorReservationBinding
@@ -56,6 +57,7 @@ class OperatorHomeActivity : AppCompatActivity() {
 
         binding = ActivityOperatorHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        attachOperatorBottomNav(R.id.nav_home)
 
         showHeader()
         setupListeners()

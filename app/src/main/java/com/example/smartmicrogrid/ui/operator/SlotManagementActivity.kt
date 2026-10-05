@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.smartmicrogrid.R
+import com.example.smartmicrogrid.ui.common.attachOperatorBottomNav
 import com.example.smartmicrogrid.data.remote.dto.SlotResponse
 import com.example.smartmicrogrid.databinding.ActivitySlotManagementBinding
 import com.example.smartmicrogrid.databinding.DialogEditSlotBinding
@@ -56,6 +57,7 @@ class SlotManagementActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySlotManagementBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        attachOperatorBottomNav(R.id.nav_slots)
 
         binding.toolbar.setNavigationOnClickListener { finish() }
         binding.rvSlots.adapter = adapter

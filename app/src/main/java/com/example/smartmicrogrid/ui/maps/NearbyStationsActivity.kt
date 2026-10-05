@@ -14,6 +14,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.smartmicrogrid.R
+import com.example.smartmicrogrid.ui.common.attachProsumerBottomNav
 import com.example.smartmicrogrid.data.remote.dto.NearbyStationResponse
 import com.example.smartmicrogrid.databinding.ActivityNearbyStationsBinding
 import com.example.smartmicrogrid.databinding.DialogStationInfoBinding
@@ -80,6 +81,7 @@ class NearbyStationsActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         binding = ActivityNearbyStationsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        attachProsumerBottomNav(R.id.nav_nearby)
 
         fusedClient = LocationServices.getFusedLocationProviderClient(this)
 
